@@ -12,6 +12,9 @@ summary: Creating github pages
 
 I used to [blog](http://memuser.blogspot.in/) sometime back using Blogger. Github pages looks much better and a nice place for my future posts.
 
+<div class="row">	
+    <div class="span9 columns">    
+		<h2>Comments</h2>
 <!-- Disqus -->
 <div id="disqus_thread"></div>
 <script type="text/javascript">
@@ -30,6 +33,8 @@ I used to [blog](http://memuser.blogspot.in/) sometime back using Blogger. Githu
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
 
+</div>
+</div>
 
 <!-- Twitter -->
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
