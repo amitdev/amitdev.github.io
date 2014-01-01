@@ -93,7 +93,21 @@ val stack = Cons(1, Cons(2, Empty)) // head = 1, tail = [2]
 Persistent
 ----------
 
-An important property of functional data structures is that they are immutable, any change on them would give us a new copy. This may not be as bad as it sounds since the structure can be often shared. For instance, if we have a list: ``1 -> 2 -> 3`` and we append 0 to it, we get a new list: ``0 -> 1 -> 2 -> 3``, but the tail of second list is just a pointer to first list, so no extra space is required (except for an extra pointer). If we insert an element in between, the elements till that needs to be copied but rest can be shared. If we append two lists, ``xs`` and ``ys``, all elements in ``xs`` needs to be copied but ``ys`` can be shared etc. There are ways to optimize this to minimize copying.
+An important property of functional data structures is that they are immutable, any change on them would give us a new copy. This may not be as bad as it sounds since the structure can be often shared. For instance, if we have a list:
+
+![drawing](/img/one.png "1 -> 2 -> 3")
+
+and we append ``0`` to it, we get a new list:
+
+![drawing](/img/two.png "0 -> 1 -> 2 -> 3")
+
+but the tail of second list is just a pointer to first list (in the image, only ``0`` is a new node as the color shows), so no extra space is required. If we insert an element in between, the elements till that needs to be copied but rest can be shared. If we append two lists, ``xs`` and ``ys``, all elements in ``xs`` needs to be copied but ``ys`` can be shared:
+
+![drawing](/img/one.png "1 -> 2 -> 3") ++
+![drawing](/img/sa1.png "4 -> 5 -> 6") ==
+![drawing](/img/sa2.png "1 -> 2 -> 3 -> 4 -> 5 -> 6")
+
+There are ways to optimize this to minimize copying.
 
 But keeping things immutable has many [advantages](http://stackoverflow.com/questions/4399837/what-is-the-benefit-of-purely-functional-data-structure). One particular benefit is even after updates the previous 'version' of the data structure is available since we don't modify anything. For this reason, functional data structures are also called persistent.
 
