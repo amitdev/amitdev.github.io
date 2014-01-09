@@ -1,3 +1,24 @@
-name: Amit Dev
-pygments: true
-markdown: redcarpet
+# Dependencies
+markdown:         redcarpet
+pygments:         true
+
+# Permalinks
+permalink:        pretty
+
+# Setup
+title:            Memetic Musings
+tagline:          'A blog on computing'
+description:      'Life long learner. Eclectic. Likes to read, code, play badminton.'
+url:              http://amitdev.github.io
+
+author:
+  name:           'Amit'
+  url:            https://twitter.com/amitdevr
+
+paginate:         5
+
+# Custom vars
+version:          2.0.0
+
+github:
+  repo:           https://github.com/amitdev
