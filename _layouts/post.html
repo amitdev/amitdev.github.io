@@ -18,7 +18,7 @@ layout: default
 
 <div class="post">
   <h1 class="post-title">{{ page.title }}</h1>
-	<div class="span3 column">
+	<div>
         {{ page.date | date: "%B %e, %Y" }}<small> <a href="http://amitdev.github.com{{ page.url }}#disqus_thread" data-disqus-identifier="{{ page.url }}">Comments</a></small>
 		<br/><small>Tags: {% for tag in page.tags %} <a href="/tags/{{ tag }}" title="View posts tagged with &quot;{{ tag }}&quot;"><u>{{ tag }}</u></a>  {% if forloop.last != true %} {% endif %} {% endfor %} </small>
 	</div>		
@@ -28,14 +28,12 @@ layout: default
 	<a href="https://twitter.com/share" class="twitter-share-button" data-via="amitdevr">Tweet</a>
 	<g:plusone size="medium"></g:plusone>
 </div>
-	<div class="span6 column">
+	<div>
 	{% if page.previous.url %} <a href="{{page.previous.url}}">&lt;&lt; {{page.previous.title}}</a> <br>{% endif %}   {% if page.next.url %} 	<a href="{{page.next.url}}">&gt;&gt; {{page.next.title}}</a> 	{% endif %}
 	</div>	
 
 <hr>
-<div class="row">	
-    <div class="span9 columns">    
-		<h2>Comments</h2>
+<h2>Comments</h2>
 <!-- Disqus -->
 <div id="disqus_thread"></div>
 <script type="text/javascript">
@@ -53,9 +51,6 @@ layout: default
 </script>
 <noscript>Please enable JavaScript to view the <a href="http://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
 <a href="http://disqus.com" class="dsq-brlink">blog comments powered by <span class="logo-disqus">Disqus</span></a>
-
-</div>
-</div>
 
 <!-- Google + -->
 <script type="text/javascript">
