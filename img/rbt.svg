@@ -1,0 +1,883 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="605.50513"
+   height="969.15198"
+   id="svg3129"
+   version="1.1"
+   inkscape:version="0.48.3.1 r9886"
+   inkscape:export-filename="/home/bodhi/bt.png"
+   inkscape:export-xdpi="90"
+   inkscape:export-ydpi="90"
+   sodipodi:docname="rbt.svg">
+  <defs
+     id="defs3131">
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send"
+       style="overflow:visible">
+      <path
+         id="path3897"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend"
+       style="overflow:visible">
+      <path
+         id="path4721"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)"
+         inkscape:connector-curvature="0" />
+    </marker>
+    <inkscape:path-effect
+       effect="skeletal"
+       id="path-effect3926"
+       is_visible="true"
+       pattern="M 0,0 0,10 10,5 z"
+       copytype="single_stretched"
+       prop_scale="1"
+       scale_y_rel="false"
+       spacing="0"
+       normal_offset="0"
+       tang_offset="0"
+       prop_units="false"
+       vertical_pattern="false"
+       fuse_tolerance="0" />
+    <inkscape:path-effect
+       effect="spiro"
+       id="path-effect3922"
+       is_visible="true" />
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-3"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4721-2"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-8"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4721-20"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow2Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow2Lend-2"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path4721-7"
+         style="fill-rule:evenodd;stroke-width:0.625;stroke-linejoin:round"
+         d="M 8.7185878,4.0337352 -2.2072895,0.01601326 8.7185884,-4.0017078 c -1.7454984,2.3720609 -1.7354408,5.6174519 -6e-7,8.035443 z"
+         transform="matrix(-1.1,0,0,-1.1,-1.1,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-6"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3897-5"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-2"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3897-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Send"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Send-0"
+       style="overflow:visible">
+      <path
+         inkscape:connector-curvature="0"
+         id="path3897-9"
+         d="M 0,0 5,-5 -12.5,0 5,5 0,0 z"
+         style="fill-rule:evenodd;stroke:#000000;stroke-width:1pt"
+         transform="matrix(-0.2,0,0,-0.2,-1.2,0)" />
+    </marker>
+  </defs>
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="0.94618804"
+     inkscape:cx="133.65298"
+     inkscape:cy="483.51912"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1863"
+     inkscape:window-height="1056"
+     inkscape:window-x="57"
+     inkscape:window-y="24"
+     inkscape:window-maximized="1"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <metadata
+     id="metadata3134">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-51.76606,-2.4436095)">
+    <g
+       transform="translate(44.26606,-3.2561172)"
+       id="g3064">
+      <title
+         id="title3066">RBT</title>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="svg_1"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="110" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3069"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="30" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3071"
+         y2="190"
+         x2="30"
+         y1="270"
+         x1="30" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="svgt"
+         y="285"
+         x="30">a</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3074"
+         y2="190"
+         x2="30"
+         y1="270"
+         x1="110" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3076"
+         y="285"
+         x="110">b</text>
+      <ellipse
+         d="m 50,190 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.045695,0 20,8.95431 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="190"
+         sodipodi:cx="30"
+         cy="190"
+         cx="30"
+         id="svg30190"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3079"
+         y="197"
+         x="30">x</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3081"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="190" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3083"
+         y="205"
+         x="190">c</text>
+      <ellipse
+         d="m 130,110 c 0,11.04569 -8.95431,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.045695 8.954305,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="110"
+         sodipodi:cx="110"
+         cy="110"
+         cx="110"
+         id="svg110110"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3086"
+         y="117"
+         x="110">y</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3088"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="270" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3090"
+         y="125"
+         x="270">d</text>
+      <ellipse
+         d="m 210,30 c 0,11.045695 -8.95431,20 -20,20 -11.04569,0 -20,-8.954305 -20,-20 0,-11.045695 8.95431,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#000000;stroke:#000000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="30"
+         sodipodi:cx="190"
+         cy="30"
+         cx="190"
+         id="svg19030"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3093"
+         y="37"
+         x="190">z</text>
+    </g>
+    <g
+       transform="translate(361.27481,-3.9995181)"
+       id="g3257">
+      <title
+         id="title3259">RBT</title>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="svg_1-0"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="30" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3262"
+         y2="110"
+         x2="30"
+         y1="190"
+         x1="30" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="svgt-9"
+         y="205"
+         x="30">a</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3265"
+         y2="110"
+         x2="30"
+         y1="190"
+         x1="110" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3267"
+         y2="190"
+         x2="110"
+         y1="270"
+         x1="110" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3269"
+         y="285"
+         x="110">b</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3271"
+         y2="190"
+         x2="110"
+         y1="270"
+         x1="190" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3273"
+         y="285"
+         x="190">c</text>
+      <ellipse
+         d="m 130,190 c 0,11.04569 -8.95431,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.04569,0 20,8.95431 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="190"
+         sodipodi:cx="110"
+         cy="190"
+         cx="110"
+         id="svg110190"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3276"
+         y="197"
+         x="110">y</text>
+      <ellipse
+         d="m 50,110 c 0,11.04569 -8.954305,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.045695 8.954305,-20 20,-20 11.045695,0 20,8.954305 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="110"
+         sodipodi:cx="30"
+         cy="110"
+         cx="30"
+         id="svg30110"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3279"
+         y="117"
+         x="30">x</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3281"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="270" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3283"
+         y="125"
+         x="270">d</text>
+      <ellipse
+         d="m 210,30 c 0,11.045695 -8.95431,20 -20,20 -11.04569,0 -20,-8.954305 -20,-20 0,-11.045695 8.95431,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#000000;stroke:#000000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="30"
+         sodipodi:cx="190"
+         cy="30"
+         cx="190"
+         id="svg19030-5"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3286"
+         y="37"
+         x="190">z</text>
+    </g>
+    <g
+       id="g3442"
+       transform="translate(54.010804,686.25574)">
+      <title
+         id="title3444">RBT</title>
+      <line
+         id="svg_1-2"
+         y2="30"
+         x2="30"
+         y1="110"
+         x1="30"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="svgt-4"
+         y="125"
+         x="30"
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif">a</text>
+      <line
+         id="line3448"
+         y2="30"
+         x2="30"
+         y1="110"
+         x1="110"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <line
+         id="line3450"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="110"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3452"
+         y="205"
+         x="110"
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif">b</text>
+      <line
+         id="line3454"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="190"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <line
+         id="line3456"
+         y2="190"
+         x2="190"
+         y1="270"
+         x1="190"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3458"
+         y="285"
+         x="190"
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif">c</text>
+      <line
+         id="line3460"
+         y2="190"
+         x2="190"
+         y1="270"
+         x1="270"
+         style="fill:none;stroke:#000000;stroke-width:3" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3462"
+         y="285"
+         x="270"
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif">d</text>
+      <ellipse
+         cy="190"
+         cx="190"
+         id="svg190190"
+         ry="20"
+         rx="20"
+         d="m 210,190 c 0,11.04569 -8.95431,20 -20,20 -11.04569,0 -20,-8.95431 -20,-20 0,-11.04569 8.95431,-20 20,-20 11.04569,0 20,8.95431 20,20 z"
+         sodipodi:cx="190"
+         sodipodi:cy="190"
+         sodipodi:rx="20"
+         sodipodi:ry="20"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3465"
+         y="197"
+         x="190"
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif">z</text>
+      <ellipse
+         cy="110"
+         cx="110"
+         id="svg110110-6"
+         ry="20"
+         rx="20"
+         d="m 130,110 c 0,11.04569 -8.95431,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.045695 8.954305,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         sodipodi:cx="110"
+         sodipodi:cy="110"
+         sodipodi:rx="20"
+         sodipodi:ry="20"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3468"
+         y="117"
+         x="110"
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif">y</text>
+      <ellipse
+         cy="30"
+         cx="30"
+         id="svg3030"
+         ry="20"
+         rx="20"
+         d="M 50,30 C 50,41.045695 41.045695,50 30,50 18.954305,50 10,41.045695 10,30 10,18.954305 18.954305,10 30,10 c 11.045695,0 20,8.954305 20,20 z"
+         sodipodi:cx="30"
+         sodipodi:cy="30"
+         sodipodi:rx="20"
+         sodipodi:ry="20"
+         style="fill:#000000;stroke:#000000;stroke-width:5" />
+      <text
+         xml:space="preserve"
+         font-size="24"
+         id="text3471"
+         y="37"
+         x="30"
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif">x</text>
+    </g>
+    <g
+       transform="translate(380.29852,677.99778)"
+       id="g3627">
+      <title
+         id="title3629">RBT</title>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="svg_1-8"
+         y2="30"
+         x2="30"
+         y1="110"
+         x1="30" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="svgt-0"
+         y="125"
+         x="30">a</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3633"
+         y2="30"
+         x2="30"
+         y1="110"
+         x1="190" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3635"
+         y2="110"
+         x2="190"
+         y1="190"
+         x1="110" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3637"
+         y2="190"
+         x2="110"
+         y1="270"
+         x1="110" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3639"
+         y="285"
+         x="110">b</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3641"
+         y2="190"
+         x2="110"
+         y1="270"
+         x1="190" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3643"
+         y="285"
+         x="190">c</text>
+      <ellipse
+         d="m 130,190 c 0,11.04569 -8.95431,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.04569 8.954305,-20 20,-20 11.04569,0 20,8.95431 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="190"
+         sodipodi:cx="110"
+         cy="190"
+         cx="110"
+         id="svg110190-9"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3646"
+         y="197"
+         x="110">y</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3648"
+         y2="110"
+         x2="190"
+         y1="190"
+         x1="270" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3650"
+         y="205"
+         x="270">d</text>
+      <ellipse
+         d="m 210,110 c 0,11.04569 -8.95431,20 -20,20 -11.04569,0 -20,-8.95431 -20,-20 0,-11.045695 8.95431,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="110"
+         sodipodi:cx="190"
+         cy="110"
+         cx="190"
+         id="svg190110"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3653"
+         y="117"
+         x="190">z</text>
+      <ellipse
+         d="M 50,30 C 50,41.045695 41.045695,50 30,50 18.954305,50 10,41.045695 10,30 10,18.954305 18.954305,10 30,10 c 11.045695,0 20,8.954305 20,20 z"
+         style="fill:#000000;stroke:#000000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="30"
+         sodipodi:cx="30"
+         cy="30"
+         cx="30"
+         id="svg3030-0"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3656"
+         y="37"
+         x="30">x</text>
+    </g>
+    <g
+       transform="translate(120.91881,360.22797)"
+       id="g3812">
+      <title
+         id="title3814">RBT</title>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="svg_1-9"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="110" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3817"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="30" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="svgt-7"
+         y="205"
+         x="30">a</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3820"
+         y2="110"
+         x2="110"
+         y1="190"
+         x1="190" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3822"
+         y="205"
+         x="190">b</text>
+      <ellipse
+         d="m 130,110 c 0,11.04569 -8.95431,20 -20,20 -11.045695,0 -20,-8.95431 -20,-20 0,-11.045695 8.954305,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#000000;stroke:#000000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="110"
+         sodipodi:cx="110"
+         cy="110"
+         cx="110"
+         id="svg110110-2"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3825"
+         y="117"
+         x="110">x</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3827"
+         y2="30"
+         x2="190"
+         y1="110"
+         x1="350" />
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3829"
+         y2="110"
+         x2="350"
+         y1="190"
+         x1="270" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3831"
+         y="205"
+         x="270">c</text>
+      <line
+         style="fill:none;stroke:#000000;stroke-width:3"
+         id="line3833"
+         y2="110"
+         x2="350"
+         y1="190"
+         x1="430" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#000000;stroke:#000000;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3835"
+         y="205"
+         x="430">d</text>
+      <ellipse
+         d="m 370,110 c 0,11.04569 -8.95431,20 -20,20 -11.04569,0 -20,-8.95431 -20,-20 0,-11.045695 8.95431,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#000000;stroke:#000000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="110"
+         sodipodi:cx="350"
+         cy="110"
+         cx="350"
+         id="svg350110"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3838"
+         y="117"
+         x="350">z</text>
+      <ellipse
+         d="m 210,30 c 0,11.045695 -8.95431,20 -20,20 -11.04569,0 -20,-8.954305 -20,-20 0,-11.045695 8.95431,-20 20,-20 11.04569,0 20,8.954305 20,20 z"
+         style="fill:#7f0000;stroke:#7f0000;stroke-width:5"
+         sodipodi:ry="20"
+         sodipodi:rx="20"
+         sodipodi:cy="30"
+         sodipodi:cx="190"
+         cy="30"
+         cx="190"
+         id="svg19030-1"
+         ry="20"
+         rx="20" />
+      <text
+         style="font-size:24px;text-anchor:middle;fill:#ffffff;stroke:#ffffff;stroke-width:0;font-family:serif"
+         xml:space="preserve"
+         font-size="24"
+         id="text3841"
+         y="37"
+         x="190">y</text>
+    </g>
+    <path
+       style="fill:#000000;fill-opacity:0.58904114;stroke:#000000;stroke-width:2.51462364;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.67123287;stroke-dasharray:2.51462374, 5.02924749;stroke-dashoffset:0;marker-end:url(#Arrow1Send)"
+       d="m 202.34748,258.00647 1.69114,127.99217"
+       id="path5140-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0.58904114;stroke:#000000;stroke-width:2.55742717;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.67123287;stroke-dasharray:2.55742723, 5.11485444;stroke-dashoffset:0;marker-end:url(#Arrow1Send)"
+       d="m 434.47677,251.62335 4.86176,122.81922"
+       id="path5140-7-8"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0.58904114;stroke:#000000;stroke-width:2.62270856;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.67123287;stroke-dasharray:2.62270845, 5.24541692;stroke-dashoffset:0;marker-end:url(#Arrow1Send)"
+       d="M 209.36294,682.38204 204.71286,564.47325"
+       id="path5140-7-3"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+    <path
+       style="fill:#000000;fill-opacity:0.58904114;stroke:#000000;stroke-width:2.9050734;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:0.67123287;stroke-dasharray:2.90507341, 5.81014683;stroke-dashoffset:0;marker-end:url(#Arrow1Send)"
+       d="M 460.89859,685.65336 460.47599,556.078"
+       id="path5140-7-7"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc" />
+  </g>
+</svg>
