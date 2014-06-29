@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="/public/css/poole.css">
   <link rel="stylesheet" href="/public/css/syntax.css">
   <link rel="stylesheet" href="/public/css/hyde.css">
+  <link type="text/css" rel="stylesheet" href="http://fast.fonts.com/cssapi/d70ca5cd-778e-48cc-9e59-6b276425c670.css"/>
   <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
 
   <!-- Icons -->
@@ -29,53 +30,67 @@
 </head>
 
 
-  <body>
+  <body class="theme-base-08">
 
-    <div class="sidebar">
-  <div class="container sidebar-sticky">
-    <div class="sidebar-about">
-      <h2>Memetic Musings</h2>
+    <!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-item">
 <p><img src="http://www.gravatar.com/avatar/e2058301b63bed4e6be9b2d5a7314f3b.png" alt="Amit Dev" class="img-rounded floatLeft" />
 
       <p>Life long learner. Eclectic. Likes to read, code, play badminton.</p>
       <a href="https://twitter.com/amitdevr" class="twitter-follow-button" data-link-color="#0069D6" data-show-count="false">Follow @amitdevr</a>
     </div>
 
-    <ul class="sidebar-nav">
-      <li class="sidebar-nav-item">
+      <div class="sidebar-nav-item">
         <a href="/">Home</a>
-      </li>
-      <li class="sidebar-nav-item"><a href="https://github.com/amitdev">GitHub projects</a></li>
-      <li class="sidebar-nav-item"><a href="http://www.linkedin.com/profile/view?id=94539442">LinkedIn profile</a></li>
-      <li class="sidebar-nav-item">Tags
+      </div>
+      <div class="sidebar-nav-item"><a href="https://github.com/amitdev">GitHub projects</a></div>
+      <div class="sidebar-nav-item"><a href="http://www.linkedin.com/profile/view?id=94539442">LinkedIn profile</a></div>
+      <div class="sidebar-item">Tags
 <ul>
+		
+	<li><a href="/tags/general">general</a></li>
 		
 	<li><a href="/tags/functional-programming">functional-programming</a></li>
 		
 	<li><a href="/tags/scala">scala</a></li>
-		
-	<li><a href="/tags/general">general</a></li>
 
 </ul>
-      </li>
+      </div>
 
-    </ul>
 
-    <p>&copy; 2014. All rights reserved. <small>Based on theme from <a href="http://hyde.getpoole.com">Hyde</a>.</small></p>
+    <p>2014. All lefts unreserved. <small>Based on theme from <a href="http://lanyon.getpoole.com">Lanyon</a>.</small></p>
   </div>
 </div>
-
 <!-- Twitter -->
 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
 
+    <!-- Wrap is the content to shift when toggling the sidebar. We wrap the
+         content to avoid any CSS collisions with our real content. -->
+    <div class="wrap">
+      <div class="masthead">
+        <div class="container">
+          <h3 class="masthead-title">
+            <a href="/" title="Home">Memetic Musings</a>
+            <small>A blog on computing</small>
+          </h3>
+        </div>
+      </div>
 
-
-    <div class="content container">
-      <div class="span6 columns">
+      <div class="container content">
+        <div class="span6 columns">
 	<h2>Posts Tagged &ldquo;general&rdquo;</h2>
 	<table class="table table-striped">
 	  <tbody>
+			
+		
+		
+		
 			
 		
 		
@@ -119,7 +134,10 @@
 </div>
 
 
+      </div>
     </div>
+
+    <label for="sidebar-checkbox" class="sidebar-toggle"></label>
 
 <!-- disqus -->
 	<script type="text/javascript">
