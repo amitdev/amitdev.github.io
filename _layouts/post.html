@@ -22,14 +22,28 @@ layout: default
         {{ page.date | date: "%B %e, %Y" }}<small> <a href="http://amitdev.github.com{{ page.url }}#disqus_thread" data-disqus-identifier="{{ page.url }}">Comments</a></small>
 		<br/><small>Tags: {% for tag in page.tags %} <a href="/tags/{{ tag }}" title="View posts tagged with &quot;{{ tag }}&quot;"><u>{{ tag }}</u></a>  {% if forloop.last != true %} {% endif %} {% endfor %} </small>
 	</div>		
+	<a href="https://twitter.com/share" class="twitter-share-button" data-via="amitdevr">Tweet</a>
+	<script src="http://platform.linkedin.com/in.js" type="text/javascript"></script>
+	<script type="IN/Share" data-counter="right"></script>
+	<g:plusone size="medium"></g:plusone>
 
   {{ content }}
 
 	<a href="https://twitter.com/share" class="twitter-share-button" data-via="amitdevr">Tweet</a>
-	<g:plusone size="medium"></g:plusone>
-</div>
-	<div>
-	{% if page.previous.url %} <a href="{{page.previous.url}}">&lt;&lt; {{page.previous.title}}</a> <br>{% endif %}   {% if page.next.url %} 	<a href="{{page.next.url}}">&gt;&gt; {{page.next.title}}</a> 	{% endif %}
+	<script src="http://platform.linkedin.com/in.js" type="text/javascript"></script>
+	<script type="IN/Share" data-counter="right"></script>
+	<g:plusone size="medium"></g:plusone><p>
+    <i>Feel free to improve this article - submit a <a href="https://github.com/amitdev/amitdev.github.io/blob/master/_posts/{{page.url | |remove_first: '/coding/' | split: '/' | join:'-' | append: '.markdown'}}" class="minibutton "><span class="octicon  octicon-git-pull-request"></span>pull request</a> or add a comment below. </i><p>
+	{% if page.previous.url %}
+        <a class="pagination-item older" href="{{page.previous.url}}">Previous</a>
+        {% else %}
+	<span class="pagination-item older">Previous</span>
+        {% endif %}
+        {% if page.next.url %}
+        <a class="pagination-item newer" href="{{page.next.url}}">Next</a>
+	{% else %}
+	 <span class="pagination-item older">Next</span>
+        {% endif %}
 	</div>	
 
 <hr>
