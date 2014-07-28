@@ -2,7 +2,7 @@
 layout: post
 title: A functional design pattern
 category: Coding
-tags: functional-programming, python
+tags: functional-programming python
 year: 2014
 month: 07
 day: 28
