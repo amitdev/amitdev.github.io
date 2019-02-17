@@ -1,6 +1,7 @@
 # Dependencies
-markdown:         redcarpet
-pygments:         true
+markdown:         kramdown
+highlighter:      rouge
+plugins:          [jekyll-paginate]
 
 # Permalinks
 permalink:        pretty
@@ -22,3 +23,8 @@ version:          2.0.0
 
 github:
   repo:           https://github.com/amitdev
+
+kramdown:
+  input: GFM
+  hard_wrap: false
+  syntax_highlighter: rouge
