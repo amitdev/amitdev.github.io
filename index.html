@@ -15,7 +15,9 @@ title: "Amit Dev"
         <p>
           {{ post.summary }}. <small><a href="{{ post.url }}">Read more...</a></small>
         <!-- {{ post.date | date: "%B %e, %Y" }} -->
-       <ul class="tags">{% for tag in post.tags %} <li><a href="/tags/{{ tag }}" rel="tooltip" title="View posts tagged with &quot;{{ tag }}&quot;">{{ tag }}</a></li>  {% if forloop.last != true %} {% endif %} {% endfor %}</ul>		            
+       <ul class="tags">{% for tag in post.tags %} 
+         <li><a href="/tags/{{ tag }}" rel="tooltip" title="View posts tagged with &quot;{{ tag }}&quot;">{{ tag }}</a></li>
+         {% if forloop.last != true %} {% endif %} {% endfor %}</ul>		            
         </p><br>
     <hr>
 {% endfor %}

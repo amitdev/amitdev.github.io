@@ -561,6 +561,7 @@ a.pagination-item:hover {
 	position:relative;
         left:-50px;
 	list-style:none;
+	color:#ffffff;
 	}
 .tags li, .tags a{
 	float:left;
@@ -573,7 +574,7 @@ a.pagination-item:hover {
 	margin-left:20px;
 	padding:0 10px 0 12px;
 	background:#D1D1D1;
-	color:#fff;
+	color:#ffffff;
 	text-decoration:none;
 	-moz-border-radius-bottomright:4px;
 	-webkit-border-bottom-right-radius:4px;	
@@ -605,11 +606,11 @@ a.pagination-item:hover {
 	-moz-border-radius:2px;
 	-webkit-border-radius:2px;
 	border-radius:2px;
-	background:#fff;
+	background:#ffffff;
 	-moz-box-shadow:-1px -1px 2px #004977;
 	-webkit-box-shadow:-1px -1px 2px #004977;
 	box-shadow:-1px -1px 2px #004977;
 	}
 
-.tags a:hover{background:#BD6768;}	
-.tags a:hover:before{border-color:transparent #BD6768 transparent transparent;}
+.tags a:hover{background:#8f5536; color: #ffffff;}	
+.tags a:hover:before{border-color:transparent #8f5536 transparent transparent;}
