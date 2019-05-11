@@ -234,7 +234,7 @@ How about functions returning functions? One way is to return a closure, but it 
 that you would expect. For example, consider the `compose` function that composes two functions `f` and `g`:
 
 {% highlight rust %}
-fn compose<X, Y, Z, F, G>(f: F, g: G) -> impl Fn(A) -> C
+fn compose<X, Y, Z, F, G>(f: F, g: G) -> impl Fn(X) -> Y
 where F: Fn(X) -> Y, G: Fn(Y) -> Z {
     move |x| g(f(x))
 }
@@ -244,11 +244,11 @@ This might look unfamiliar, so lets go through it:
 
 * `X, Y, Z, F and G` are type parameters. `F` is type of a function that takes an argument of type `X` and returns `Y` etc.
 * `impl Fn(X) -> Z`: The function returns a closure. Since the actual type that is returned might vary per call
-   (each closure is a differnt type since the capturing variables might differ), we need to tell compiler that what we really return is an implementation of the `Fn` trait.
+   (each closure is of a different type since the capturing variables might differ), we need to tell compiler that what we really return is an implementation of the `Fn` trait.
 * `move` This is related to ownership. Since we return a closure, we don't know when that is called and its lifetime may outlive the function. So the closure needs to own
 the variables instead of borrowing it. This might seem confusing at first, but rust compiler has excellent [error messages](https://doc.rust-lang.org/error-index.html#E0373) to guide you here.
 
-Note: There is also [FnOnce](https://doc.rust-lang.org/std/ops/trait.FnOnce.html) which only can be called once, and [FnMut](https://doc.rust-lang.org/std/ops/trait.FnMut.html)
+Note: `Fn` is not the only function type. There is also [FnOnce](https://doc.rust-lang.org/std/ops/trait.FnOnce.html) which only can be called once, and [FnMut](https://doc.rust-lang.org/std/ops/trait.FnMut.html)
 which allows the closure to mutate state.
 
 ## Conclusion
