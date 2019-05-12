@@ -234,7 +234,7 @@ How about functions returning functions? One way is to return a closure, but it 
 that you would expect. For example, consider the `compose` function that composes two functions `f` and `g`:
 
 {% highlight rust %}
-fn compose<X, Y, Z, F, G>(f: F, g: G) -> impl Fn(X) -> Y
+fn compose<X, Y, Z, F, G>(f: F, g: G) -> impl Fn(X) -> Z
 where F: Fn(X) -> Y, G: Fn(Y) -> Z {
     move |x| g(f(x))
 }
