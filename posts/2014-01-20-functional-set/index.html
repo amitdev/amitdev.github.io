@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>A basic, immutable Set in Scala | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="In the last article we saw one way of implementing an object-functional, immutable Stack data structure. Now let&#39;s see how to implement a Set data structure. A Set is a container which supports the following operations efficiently:
+ insert: adds a new item to the Set delete: removes given item from the Set member: check if a given item is in the Set  As we did before with the Stack, we can define this behavior in a Trait like the following:" />
+    <meta name="keywords" content="programming, functional-programming, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/posts/2014-01-20-functional-set/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2014-01-20T00:00:00+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/posts/2014-01-20-functional-set/",
+        "headline": "A basic, immutable Set in Scala",
+        "description": "In the last article we saw one way of implementing an object-functional, immutable Stack data structure. Now let's see how to implement a Set data structure. A Set is a container which supports the following operations efficiently:\n insert: adds a new item to the Set delete: removes given item from the Set member: check if a given item is in the Set  As we did before with the Stack, we can define this behavior in a Trait like the following:",
+        "keywords": "programming, functional-programming, scala",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  1772 ,
+        "image": ["https://example.com/images/rbt.svg","https://example.com/images/s.svg"],
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://example.com/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary_large_image" />
+
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="A basic, immutable Set in Scala" />
+<meta property="og:description" content="In the last article we saw one way of implementing an object-functional, immutable Stack data structure. Now let&#39;s see how to implement a Set data structure. A Set is a container which supports the following operations efficiently:
+ insert: adds a new item to the Set delete: removes given item from the Set member: check if a given item is in the Set  As we did before with the Stack, we can define this behavior in a Trait like the following:" />
+<meta property="og:url" content="https://example.com/posts/2014-01-20-functional-set/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/images/rbt.svg" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2014-01-20T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-01-20T12:57:26+11:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, scala" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">A basic, immutable Set in Scala</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2014-01-20T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2014.1.20</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1772</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;9&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p style="text-indent:0"><span class="drop-cap">I</span>n the <a href="/posts/2013-12-31-functional-stack/">last article</a> we saw one way of implementing an object-functional, immutable Stack data structure. Now let's see how to implement a Set data structure. A Set is a container which supports the following operations efficiently:</p>
+<ul>
+<li><code>insert</code>: adds a new item to the Set</li>
+<li><code>delete</code>: removes given item from the Set</li>
+<li><code>member</code>: check if a given item is in the Set</li>
+</ul>
+<p>As we did before with the Stack, we can define this behavior in a Trait like the following:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Set</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">item</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">item</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">member</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">item</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Boolean</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="ordering"><a href="#ordering" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Ordering</h2>
+<p>We are planning to implement the Set using <a href="http://en.wikipedia.org/wiki/Binary_search_tree">Binary Search Trees</a> (BST) which means elements in the Set needs to be comparable (or can be ordered). One way to do it is by constraining the type <code>T</code> to be a subclass of <code>Ordered[T]</code>. But a more lenient approach is to allow the caller to use any type as long as it can be <a href="http://www.artima.com/pins1ed/implicit-conversions-and-parameters.html">implicitly</a> converted to an <code>Ordered[T]</code>. Scala provides syntactic sugar for doing this easily called <a href="http://twitter.github.io/scala_school/advanced-types.html">view bounds</a> using which we can define the type as <code>+T &lt;% Ordered[T]</code>. Since an implicit parameter needs to be passed under the hood, we define <code>Set</code> as an abstract class. A partial definition will look like the following:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Set</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="k">&lt;%</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="k">&lt;%</span> <span class="kt">Ordered</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>There are <a href="https://issues.scala-lang.org/browse/SI-7629">plans</a> to deprecate view bounds from Scala. We could use the equivalent:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Set</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="n">t2ord</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=&gt;</span> <span class="nc">Ordered</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span><span class="o">(</span><span class="k">implicit</span> <span class="n">u2ord</span> <span class="k">:</span> <span class="kt">U</span> <span class="o">=&gt;</span> <span class="nc">Ordered</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This is a bit verbose since we have to repeat the implicit parameter at multiple places.  A better option is to use <a href="http://stackoverflow.com/questions/2982276/what-is-a-context-bound-in-scala">context bounds</a>. We can also define a type alias for <code>T =&gt; Ordered[T]</code> to simplify things:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">type</span> <span class="kt">Orderable</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">T</span> <span class="k">=&gt;</span> <span class="nc">Ordered</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+
+<span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Set</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Set</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">member</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">Boolean</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="unbalanced-bst"><a href="#unbalanced-bst" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Unbalanced BST</h2>
+<p>Now that we are done with defining proper types, let's start with the actual implementation. We will first implement an unbalanced version. A BST node can either be a <code>Leaf</code> which is a sentinel for empty, or a <code>Node</code> which has a value, left tree and right tree. Once we have this, implementing the operations recursively is trivial since the structure of the tree is also recursive. For instance, to insert a value we need to compare with the root and if the value is less insert on left tree otherwise on right tree etc.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Set</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="k">object</span> <span class="nc">BST</span> <span class="o">{</span>
+  <span class="k">class</span> <span class="nc">Leaf</span> <span class="k">extends</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">member</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">=</span> <span class="kc">false</span>
+    <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Node</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">class</span> <span class="nc">Node</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">y</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">left</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">right</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+    <span class="k">def</span> <span class="n">member</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">=</span>
+                               <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">)</span> <span class="n">left</span><span class="o">.</span><span class="n">member</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+                               <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span><span class="o">)</span> <span class="n">right</span><span class="o">.</span><span class="n">member</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+                               <span class="k">else</span> <span class="kc">true</span>
+
+    <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span>
+                               <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">)</span> <span class="nc">Node</span><span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">.</span><span class="n">insert</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span>
+                               <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span><span class="o">)</span> <span class="nc">Node</span><span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">.</span><span class="n">insert</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">)</span>
+                               <span class="k">else</span> <span class="k">this</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>As is the case with persistent data structures, the operations will result in new copies with potential sharing of structure. For instance, if we insert a value which is less than that in root node, the complete right subtree can be shared etc.</p>
+<h3 id="deletion"><a href="#deletion" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Deletion</h3>
+<p>Deleting a node from BST is slightly more <a href="http://en.wikipedia.org/wiki/Binary_search_tree#Deletion">complex</a>. One way is to replace the deleted node with its inorder predecessor. Additionally we need to reconstruct the subtree containing the deleted and predecessor nodes since our data structure is immutable. There are special cases to consider like one or both children being empty which can be handled by the <code>Leaf</code> object. In the following implementation we use <code>delete</code> method to locate the node to be deleted and <code>deleteCurrent</code> to actually replace stuff. It uses a recursive <code>fixNodes</code> function which finds the predecessor and propagates it back to deleted node rebuilding the tree.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">class</span> <span class="nc">Leaf</span> <span class="k">extends</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="k">this</span>
+  <span class="k">protected</span> <span class="k">def</span> <span class="n">deleteCurrent</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span> <span class="k">=</span> <span class="n">t</span>
+  <span class="k">protected</span> <span class="k">def</span> <span class="n">fixNodes</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span> <span class="k">=</span> <span class="kc">null</span>
+<span class="o">}</span>
+
+<span class="k">class</span> <span class="nc">Node</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">y</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">left</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">right</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">delete</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span>
+                    <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">)</span> <span class="nc">Node</span><span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">.</span><span class="n">delete</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span>
+                    <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span><span class="o">)</span> <span class="nc">Node</span><span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">.</span><span class="n">delete</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">)</span>
+                    <span class="k">else</span> <span class="n">left</span><span class="o">.</span><span class="n">deleteCurrent</span><span class="o">(</span><span class="n">right</span><span class="o">)</span>
+
+  <span class="k">protected</span> <span class="k">def</span> <span class="n">fixNodes</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span> <span class="k">:</span> <span class="o">(</span><span class="kt">U</span><span class="o">,</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">r</span> <span class="k">=</span> <span class="n">right</span><span class="o">.</span><span class="n">fixNodes</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">r</span> <span class="o">!=</span> <span class="kc">null</span><span class="o">)</span> <span class="o">{</span>
+      <span class="k">val</span> <span class="o">(</span><span class="n">ny</span><span class="o">,</span> <span class="n">nr</span><span class="o">)</span> <span class="k">=</span> <span class="n">r</span>
+      <span class="o">(</span><span class="n">ny</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">nr</span><span class="o">)</span><span class="o">)</span>
+    <span class="o">}</span> <span class="k">else</span> <span class="o">(</span><span class="n">y</span><span class="o">,</span> <span class="n">left</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">protected</span> <span class="k">def</span> <span class="n">deleteCurrent</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="o">(</span><span class="n">ny</span><span class="o">,</span> <span class="n">nl</span><span class="o">)</span> <span class="k">=</span> <span class="n">fixNodes</span>
+    <span class="nc">Node</span><span class="o">(</span><span class="n">ny</span><span class="o">,</span> <span class="n">nl</span><span class="o">,</span> <span class="n">t</span><span class="o">)</span>
+  <span class="o">}</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="balanced-bst"><a href="#balanced-bst" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Balanced BST</h2>
+<p>As you would know, we need a better solution to work efficiently on all inputs. The tree operations take <code>O(d)</code> time where d is the depth of the tree. If we insert <em>n</em> items which are in sorted order, we create a tree with depth <em>n</em> which makes the operations linear time. To avoid this, we need to keep the tree balanced so that the depth is roughly <em>log(n)</em>. There are multiple ways to do this like AVL trees, Red Black trees(RBT) etc. We will consider a Red black tree implementation here.</p>
+<p>Okasaki gives an elegant implementation of RBT in the <a href="http://www.amazon.com/Purely-Functional-Structures-Chris-Okasaki/dp/0521663504">book</a> (If you don't have a copy see <a href="http://www.cs.tufts.edu/~nr/cs257/archive/chris-okasaki/redblack99.ps">this</a> paper). As usual, we will adopt the solution to Scala and it is natural to extend from the <code>BST</code>, <code>Leaf</code> and <code>Node</code> classes which we already have. We need an additional method <code>balancedInsert</code> to take care of balancing, so let's create a Trait to capture RBT specific stuff:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">RBT</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">BST</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">balancedInsert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>RBT is a BST with the following additional properties which guarantees that the tree remains balanced:</p>
+<ol>
+<li>Every node is either Red or Black. The <code>Leaf</code> nodes are black by convention.</li>
+<li>A red node cannot have a red parent</li>
+<li>Every path from root to leaf should have same no.of black nodes.</li>
+</ol>
+<p><code>balancedInsert</code> makes sure that (2) and (3) above are not violated when inserting an item. We start defining the <code>Node</code> for RBT as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">Color</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">Red</span> <span class="k">extends</span> <span class="nc">Color</span>
+<span class="k">case</span> <span class="k">object</span> <span class="nc">Black</span> <span class="k">extends</span> <span class="nc">Color</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Node</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">color</span><span class="k">:</span> <span class="kt">Color</span><span class="o">,</span> <span class="n">v</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">left</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">right</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span>
+                                <span class="k">extends</span> <span class="nc">BST</span><span class="o">.</span><span class="nc">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span> <span class="k">with</span> <span class="nc">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">e</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="nc">Node</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="n">a1</span><span class="o">,</span><span class="n">a2</span><span class="o">,</span><span class="n">a3</span><span class="o">)</span> <span class="k">=</span> <span class="n">balancedInsert</span><span class="o">(</span><span class="n">e</span><span class="o">)</span>
+    <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">a1</span><span class="o">,</span> <span class="n">a2</span><span class="o">,</span> <span class="n">a3</span><span class="o">)</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Note that we don't need to define the <code>member</code> function here. The behavior is same as that of a <code>BST</code> and since we inherit from <code>BST.Node</code> we get that for free. We override <code>insert</code> and make sure we balance things when something is inserted if needed. Finally we maintain the invariant that the root node is always Black.</p>
+<p>Let's define the <code>Leaf</code> for RBT which is simple enough:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">object</span> <span class="nc">Leaf</span> <span class="k">extends</span> <span class="nc">BST</span><span class="o">.</span><span class="nc">Leaf</span> <span class="k">with</span> <span class="nc">RBT</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">def</span> <span class="n">insert</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">,</span> <span class="nc">Leaf</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">balancedInsert</span><span class="o">[</span><span class="kt">U</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span>  <span class="k">=</span> <span class="n">insert</span><span class="o">(</span><span class="n">x</span><span class="o">)</span>
+<span class="o">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>So far we haven't done much in RBT and once we define <code>balancedInsert</code> we are done! Of course balancing the tree is the heart of <code>insert</code> operation. As discussed in the paper, we just need to handle balancing (by rotation) in four cases:</p>
+<img src="/images/rbt.svg" alt="Balancing Cases" style="width: 60%; height: 60%"/>
+<p>This can be declaratively expressed in code, thanks to pattern matching as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">balancedInsert</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">e</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">balance</span><span class="o">(</span><span class="n">cn</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">cn</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">c</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span><span class="o">)</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">c</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">c</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">c</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span>
+    <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="n">b</span><span class="o">,</span> <span class="n">c</span><span class="o">)</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="nc">Node</span><span class="o">(</span><span class="nc">Red</span><span class="o">,</span> <span class="n">y</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">a</span><span class="o">,</span> <span class="n">b</span><span class="o">)</span><span class="o">,</span> <span class="nc">Node</span><span class="o">(</span><span class="nc">Black</span><span class="o">,</span> <span class="n">z</span><span class="o">,</span> <span class="n">c</span><span class="o">,</span> <span class="n">d</span><span class="o">)</span><span class="o">)</span>
+    <span class="k">case</span> <span class="n">c</span> <span class="k">=&gt;</span> <span class="n">c</span>
+  <span class="o">}</span>
+
+  <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">&lt;</span> <span class="n">v</span><span class="o">)</span> <span class="n">balance</span><span class="o">(</span><span class="nc">Node</span><span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="n">v</span><span class="o">,</span> <span class="n">left</span><span class="o">.</span><span class="n">balancedInsert</span><span class="o">(</span><span class="n">e</span><span class="o">)</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span><span class="o">)</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">e</span> <span class="o">&gt;</span> <span class="n">v</span><span class="o">)</span> <span class="n">balance</span><span class="o">(</span><span class="nc">Node</span><span class="o">(</span><span class="n">color</span><span class="o">,</span> <span class="n">v</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">.</span><span class="n">balancedInsert</span><span class="o">(</span><span class="n">e</span><span class="o">)</span><span class="o">)</span><span class="o">)</span>
+  <span class="k">else</span> <span class="k">this</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>balance</code> does the actual rotation and it corresponds as is to the above diagram. This, in fact, is the heart of the algorithm. Most of the other things we talked about are about how we organize code cleanly, adding flexible type support etc.</p>
+<p>Side Note: We didn't tackle deletion of a node here. Implementing the <code>delete</code> operation is slightly involved for <code>RBT</code>. See <a href="http://matt.might.net/articles/red-black-delete/">this</a> post to see how it can be done.</p>
+<h2 id="example"><a href="#example" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Example</h2>
+<p>Let's see a sample tree construction to see how it works. Assume we insert 1,2,3,4 in this order, we get something like the following:</p>
+<img src="/images/s.svg" alt="1" style="width: 80%; height: 80%"/>
+<p>We are only discussing the very basic operations of the data structure here. Using this other convenience functions can be easily added. For example, we can add an <code>apply</code> function to help creating a Set from its arguments as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">apply</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">T</span><span class="kt">*</span><span class="o">)</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="nc">Leaf</span><span class="o">.</span><span class="n">asInstanceOf</span><span class="o">[</span><span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span><span class="o">)</span><span class="o">(</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">t</span><span class="o">.</span><span class="n">insert</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="testing"><a href="#testing" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Testing</h2>
+<p>As we did before, tests using <a href="http://www.scalacheck.org/">Scalacheck</a> can be written once we have a generator of random trees.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">arbBST</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="n">a</span><span class="k">:</span> <span class="kt">Arbitrary</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">=</span> <span class="nc">Arbitrary</span> <span class="o">{</span>
+  <span class="k">for</span> <span class="o">{</span>
+    <span class="n">v</span> <span class="k">&lt;-</span> <span class="nc">Arbitrary</span><span class="o">.</span><span class="n">arbitrary</span><span class="o">[</span><span class="kt">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="nc">BST</span><span class="o">(</span><span class="n">v</span><span class="k">:</span><span class="k">_</span><span class="kt">*</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="n">test</span><span class="o">(</span><span class="s">&#34;Set Insert&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="o">.</span><span class="n">insert</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">.</span><span class="n">member</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="n">test</span><span class="o">(</span><span class="s">&#34;Set delete&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">BST</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">!</span><span class="n">s</span><span class="o">.</span><span class="n">delete</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">.</span><span class="n">member</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">)</span>
+<span class="o">}</span>
+
+</code></pre></td></tr></table>
+</div>
+</div><p>That's all for now. See the complete code for <a href="https://github.com/amitdev/functional-ds/blob/master/src/main/scala/ds/Set.scala">Set</a>. Scala standard library also provides an implementation of <a href="https://github.com/scala/scala/blob/master/src/library/scala/collection/immutable/RedBlackTree.scala">RBT</a> in a different style.</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-03-06-priority-queue/" class="related-link">Purely functional Priority Queue</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-24-augmented-data/" class="related-link">Drawing Trees</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2013-12-31-functional-stack/" class="related-link">A basic, immutable Stack in Scala</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/scala/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>scala</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/2014-01-24-augmented-data/" rel="prev">< Drawing Trees</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/2013-12-31-functional-stack/" rel="next">A basic, immutable Stack in Scala ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

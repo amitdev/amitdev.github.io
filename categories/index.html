@@ -1,0 +1,731 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>Categories | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="Writings about programming" />
+    <meta name="keywords" content="general, learning, programming, functional-programming, python, rust, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/categories/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "datePublished": "2014-07-20T20:17:43+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/categories/",
+        "name": "Categories",
+        "description": "Writings about programming",
+        "keywords": "general, learning, programming, functional-programming, python, rust, scala",
+        "image": "https://example.com/icons/apple-touch-icon.png",
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary" />
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="Categories" />
+<meta property="og:description" content="Writings about programming" />
+<meta property="og:url" content="https://example.com/categories/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item active"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    
+        <main class="main list" id="main">
+    <div class="main-inner">
+        <div class="content categories">
+            
+                <h1 class="list-title">Categories</h1>
+            
+            <div class="tree">
+                
+                
+                    
+                
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                    
+                        
+                        
+                            
+                            
+                            
+                        
+                    
+                
+                
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <p style="padding-left: 2em">
+                            <a href="/categories/general/" class="category-item">General</a>
+                            
+                                <span class="category-count">(1)</span>
+                            
+                        </p>
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/first-post/" class="category-post">Moving in from Blogger</a>
+                                    </p>
+                                
+                            
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <p style="padding-left: 2em">
+                            <a href="/categories/learning/" class="category-item">Learning</a>
+                            
+                                <span class="category-count">(1)</span>
+                            
+                        </p>
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2014-06-29-learning-functional-programming/" class="category-post">Learning Functional Programming - A Roadmap</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                    
+                
+                    
+                    
+                    
+                    
+                    
+                    
+                    
+                        <p style="padding-left: 2em">
+                            <a href="/categories/programming/" class="category-item">Programming</a>
+                            
+                                <span class="category-count">(6)</span>
+                            
+                        </p>
+                    
+                    
+                        
+                        
+                            
+                            
+                        
+                            
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2019-03-26-functional-rust/" class="category-post">Functional programming in Rust</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2014-07-28-a-functional-design-pattern/" class="category-post">A functional design pattern</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2014-03-06-priority-queue/" class="category-post">Purely functional Priority Queue</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2014-01-24-augmented-data/" class="category-post">Drawing Trees</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2014-01-20-functional-set/" class="category-post">A basic, immutable Set in Scala</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                                    <p style="padding-left: 4em">
+                                        <a href="/posts/2013-12-31-functional-stack/" class="category-post">A basic, immutable Stack in Scala</a>
+                                    </p>
+                                
+                            
+                        
+                            
+                            
+                                
+                                
+                                    
+                                    
+                                
+                                
+                                
+                            
+                        
+                    
+                
+            </div>
+        </div>
+    </div>
+</main>
+    
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

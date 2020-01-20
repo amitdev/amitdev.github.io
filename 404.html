@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en-US">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>404 Page not found | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="Writings about programming" />
+    <meta name="keywords" content="general, learning, programming, functional-programming, python, rust, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/404.html" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "WebPage",
+        "datePublished": "2014-07-20T20:17:43+00:00",
+        "dateModified": "2014-07-20T20:17:43+00:00",
+        "url": "https://example.com/404.html",
+        "name": "404 Page not found",
+        "description": "Writings about programming",
+        "keywords": "general, learning, programming, functional-programming, python, rust, scala",
+        "image": "https://example.com/icons/apple-touch-icon.png",
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary" />
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="404 Page not found" />
+<meta property="og:description" content="Writings about programming" />
+<meta property="og:url" content="https://example.com/404.html" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="website" />
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            <main class="fof">
+                
+                <div class="main-inner">
+                    <h1>404 Page NOT Found.</h1>
+                    <div class="fof-footer">
+                        <a href="/">Take Me Home</a>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </body>
+</html>

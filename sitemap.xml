@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+  xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  
+  <url>
+    <loc>https://example.com/about/</loc>
+    <lastmod>2020-01-20T14:46:52+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/talks/</loc>
+    <lastmod>2020-01-20T14:55:58+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/</loc>
+    <lastmod>2020-01-20T14:55:58+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/categories/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/functional-programming/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2019-03-26-functional-rust/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/categories/programming/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/rust/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2014-07-28-a-functional-design-pattern/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/python/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/categories/learning/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2014-06-29-learning-functional-programming/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2014-03-06-priority-queue/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/tags/scala/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2014-01-24-augmented-data/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2014-01-20-functional-set/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/2013-12-31-functional-stack/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/categories/general/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://example.com/posts/first-post/</loc>
+    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
+  </url>
+  
+</urlset>

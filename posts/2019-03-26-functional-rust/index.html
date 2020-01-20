@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>Functional programming in Rust | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="Rust is a modern, multi paradigm language with the following primary goals:
+ Performance (zero cost abstractions) Reliability (no data races)  Rust is strongly influenced by functional programming languages like ML, so it is possible to follow a functional coding style in it." />
+    <meta name="keywords" content="programming, functional-programming, rust" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/posts/2019-03-26-functional-rust/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2019-03-26T00:00:00+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/posts/2019-03-26-functional-rust/",
+        "headline": "Functional programming in Rust",
+        "description": "Rust is a modern, multi paradigm language with the following primary goals:\n Performance (zero cost abstractions) Reliability (no data races)  Rust is strongly influenced by functional programming languages like ML, so it is possible to follow a functional coding style in it.",
+        "keywords": "programming, functional-programming, rust",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  1470 ,
+        "image": "https://example.com/icons/apple-touch-icon.png",
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://example.com/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary" />
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="Functional programming in Rust" />
+<meta property="og:description" content="Rust is a modern, multi paradigm language with the following primary goals:
+ Performance (zero cost abstractions) Reliability (no data races)  Rust is strongly influenced by functional programming languages like ML, so it is possible to follow a functional coding style in it." />
+<meta property="og:url" content="https://example.com/posts/2019-03-26-functional-rust/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2019-03-26T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-01-20T12:57:26+11:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, rust" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">Functional programming in Rust</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2019-03-26T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2019.3.26</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1470</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;7&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p><a href="https://www.rust-lang.org/">Rust</a> is a modern, multi paradigm language with the following primary goals:</p>
+<ul>
+<li>Performance (zero cost abstractions)</li>
+<li>Reliability (no data races)</li>
+</ul>
+<p style="text-indent:0"><span class="drop-cap">R</span>ust is strongly influenced by functional programming languages like ML, so it is
+possible to follow a functional coding style in it.
+However being functional is not one of Rust's explicit goals.</p>
+<p>In this post (and possibly follow up ones) I'll explore functional programming in  Rust. This is not an introduction to
+Rust or functional programming. Basic familiarity with them is assumed.</p>
+<h2 id="functional-programming"><a href="#functional-programming" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Functional Programming</h2>
+<p>The goal of programming is to manage complexity.</p>
+<p>In functional programming we manage complexity by principled composition - large things are composed of
+small things.</p>
+<p>The more things we can compose together the better abstractions
+we can build and reduce complexity. The building blocks are types and functions, and let us
+see how well we can compose them in Rust.</p>
+<h2 id="algebraic-data-types"><a href="#algebraic-data-types" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Algebraic data types</h2>
+<p>Lets start with types. One way to classify types is by looking at number of inhabitants,
+that is, how many values of a particular type exists. For eg, the unit type (<code>()</code> in Rust) has only
+one value, <code>bool</code> has two values etc. Apart from builtin types, Rust supports Sum and Product types, which means we can
+combine basic types using addition or multiplication (in terms of number of inhabitants). The key
+insight here is that we can use the familiar algebra from maths to reason about them, hence the name.</p>
+<p>In Rust we could create a sum type
+by using <code>enum</code>. Think of it more like type constructor in Haskell, than enum in C/Java.</p>
+<p>For eg. we can create a type with a two values as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">enum</span> <span class="nc">Wing</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="c1">// name of type
+</span><span class="c1"></span><span class="w">    </span><span class="n">Left</span><span class="w">    </span><span class="c1">// value
+</span><span class="c1"></span><span class="w">    </span><span class="n">Right</span><span class="w">   </span><span class="c1">// value
+</span><span class="c1"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>A product type can be created using a tuple <code>(A, B)</code> or <code>struct</code>.</p>
+<p>Here are examples of some types:</p>
+<table>
+<thead>
+<tr>
+<th># of Inhabitants</th>
+<th>Rust</th>
+<th>Haskell</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td><code>enum Void {}</code></td>
+<td><code>data Void</code> or <br> <code>Data.Void</code></td>
+</tr>
+<tr>
+<td>1</td>
+<td><code>enum Unit { Unit }</code> or <br> <code>()</code></td>
+<td><code>data Unit = Unit</code> or <br> <code>()</code></td>
+</tr>
+<tr>
+<td>1 + 1</td>
+<td><code>enum Direction { Up, Down }</code> or <br> <code>bool</code></td>
+<td><code>data Direction = Up | Down</code> or <br> <code>Boolean</code></td>
+</tr>
+<tr>
+<td>1 + A</td>
+<td><code>enum Option&lt;A&gt; { Some(A), None }</code></td>
+<td><code>data Maybe a = Just a | Nothing</code></td>
+</tr>
+<tr>
+<td>A + B</td>
+<td><code>enum Result&lt;A, B&gt; { Ok(A), Err(B) }</code></td>
+<td><code>data Either a b = Left a | Right b</code></td>
+</tr>
+<tr>
+<td>A * B</td>
+<td><code>(A, B)</code> or <br> <code>struct Tuple { a: A, b: B }</code></td>
+<td><code>data (a, b) = (a, b)</code></td>
+</tr>
+</tbody>
+</table>
+<p>As you can see we can compose types using addition or multiplication. This is useful in modelling
+types.</p>
+<p>For eg. since <code>A + A = 2 * A</code>, we could represent a type <code>enum Score&lt;A&gt; { Left(A), Right(A) }</code>
+as <code>(bool, A)</code>. Intuitively, the boolean represents whether the value is left or right.</p>
+<h2 id="pattern-matching"><a href="#pattern-matching" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Pattern matching</h2>
+<p>A language feature that goes well with algebraic data types in pattern matching. It helps to deconstruct
+data out of types in a simple way. Rust offers powerful pattern matching support and almost anything can
+be deconsutructed using it. For example with the following types:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">enum</span> <span class="nc">Maybe</span><span class="o">&lt;</span><span class="n">A</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Just</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Nothing</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">struct</span> <span class="nc">Person</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">name</span>: <span class="nb">String</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">age</span>: <span class="kt">u8</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">email</span>: <span class="nc">Maybe</span><span class="o">&lt;</span><span class="nb">String</span><span class="o">&gt;</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>we can pattern match things out of it using:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="kd">let</span><span class="w"> </span><span class="n">person</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">Person</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">name</span>: <span class="s">&#34;Alice&#34;</span><span class="p">.</span><span class="n">to_string</span><span class="p">(</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">age</span>: <span class="mi">25</span><span class="p">,</span><span class="w"> 
+</span><span class="w">  </span><span class="n">email</span>: <span class="nc">Just</span><span class="p">(</span><span class="s">&#34;alice@example.com&#34;</span><span class="p">.</span><span class="n">to_string</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="k">match</span><span class="w"> </span><span class="n">person</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Person</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">name</span><span class="w"> </span>: <span class="nc">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span>: <span class="nc">age</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="w"> </span>: <span class="nc">Just</span><span class="p">(</span><span class="n">email</span><span class="p">)</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Person {}, aged {} with email {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Person</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="n">name</span>: <span class="nc">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span>: <span class="nc">age</span><span class="p">,</span><span class="w"> </span><span class="n">email</span><span class="w"> </span>: <span class="nc">Nothing</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Person {}, aged {} with no email&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">name</span><span class="p">,</span><span class="w"> </span><span class="n">age</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Pattern guards and capturing pattern in a single variable is also supported. For eg:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">match</span><span class="w"> </span><span class="n">someVar</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="nb">Some</span><span class="p">(</span><span class="n">val</span><span class="w"> </span><span class="o">@</span><span class="w"> </span><span class="mi">0</span><span class="w"> </span><span class="p">.</span><span class="p">.</span><span class="p">.</span><span class="w"> </span><span class="mi">9</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;within 0 to 9, {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="nb">Some</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">val</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">20</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;greater than 20, {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="nb">Some</span><span class="p">(</span><span class="n">val</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;Should be less than 20, {}&#34;</span><span class="p">,</span><span class="w"> </span><span class="n">val</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="nb">None</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">println</span><span class="o">!</span><span class="p">(</span><span class="s">&#34;None&#34;</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>Patterns is commonly used in match expressions but they can be used in place of identifier in other places as well like
+variable declaration, function arguments etc.</p>
+<h2 id="functions"><a href="#functions" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Functions</h2>
+<p>Functions are first class in Rust and it supports <a href="https://doc.rust-lang.org/book/ch13-01-closures.html">closures</a> as well.</p>
+<p>However, one has to think about ownership and lifetime of variables when dealing with them.
+Basically Rust is not a language with garbage collection and the programmer has to
+give hints to the compiler about ownership of variables so they can be <em>dropped</em> after use. This is
+probably the hardest part to get while learning Rust and also what makes Rust special.</p>
+<p>Read more about ownership <a href="https://doc.rust-lang.org/book/ch04-01-what-is-ownership.html">here</a>.</p>
+<p>Lets start with a simple definition of factorial:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span>: <span class="kt">u64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="k">match</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="mi">0</span><span class="w"> </span><span class="o">|</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="n">n</span><span class="w">     </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">n</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>This is a straightforward translation of recursive definition of factorial; <code>factorial(n) = n * factorial(n-1)</code>.
+While this is fairly clear, it is often better to use high level combinators than explicit recursion.
+So we can write above as:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span>: <span class="kt">u64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="p">.</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="p">.</span><span class="n">fold</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="w"> </span><span class="o">|</span><span class="n">acc</span><span class="p">,</span><span class="w"> </span><span class="n">i</span><span class="o">|</span><span class="w"> </span><span class="n">acc</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">i</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>where <code>|acc, i| acc * i</code> is a closure (similar to <code>\acc i -&gt; acc * i</code> in Haskell, or <code>(acc, i) -&gt; acc * i</code> in Java).
+So the above code basically takes range of numbers from 1 to n inclusive and multiplies them.</p>
+<p>Note: Most of the operators in Rust have traits associated with it. So the <code>*</code> operator above is defined in
+<code>std::ops::Mul</code> trait and <code>acc * i</code> is a short hand for <code>acc.mul(i)</code>. So the above can also be written as:</p>
+<p><code>(1..n+1).fold(1, Mul::mul)</code></p>
+<p>This makes it clear that <code>factorial(n)</code> is the product of first n natural numbers. It can be made
+explicit by using the builtin <code>product</code> function, which folds over using multiplication.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">factorial</span><span class="p">(</span><span class="n">n</span>: <span class="kt">u64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">u64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="p">.</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="p">.</span><span class="n">product</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>The key here is all of the above does not have any performance overhead, it performs similar to an
+imperative loop that multiplies the numbers.</p>
+<h2 id="higher-order-functions"><a href="#higher-order-functions" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Higher order functions</h2>
+<p>Now lets look at how to define and use higher order functions. Function types in Rust implement
+the <code>Fn</code> trait (think of traits as something similar to type classes). A function that takes in
+type <code>X</code> and return type <code>Y</code> can be represented as <code>Fn(X) -&gt; Y</code>.</p>
+<p>For example, consider a function that takes a function and calls it with given argument:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">apply</span><span class="o">&lt;</span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">A</span><span class="p">,</span><span class="w"> </span><span class="n">B</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span>: <span class="nc">F</span><span class="p">,</span><span class="w"> </span><span class="n">arg</span>: <span class="nc">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="w"> 
+</span><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">F</span>: <span class="nb">Fn</span><span class="p">(</span><span class="n">A</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">B</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">f</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">square</span><span class="p">(</span><span class="n">a</span>: <span class="kt">i32</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">i32</span> <span class="p">{</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">a</span><span class="w"> </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="c1">// apply can take another function as argument
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span> <span class="o">=</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="n">square</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="p">;</span><span class="w">    </span><span class="c1">// n = 16
+</span><span class="c1"></span><span class="c1">// apply can also take a closure as argument
+</span><span class="c1"></span><span class="kd">let</span><span class="w"> </span><span class="n">n</span>: <span class="kt">i32</span> <span class="o">=</span><span class="w"> </span><span class="n">apply</span><span class="p">(</span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="mi">4</span><span class="p">)</span><span class="p">;</span><span class="w"> </span><span class="c1">// n = 16
+</span></code></pre></td></tr></table>
+</div>
+</div><p>A more interesting example of higher order function is the fixed point function. A fixed point of a function <code>f</code> is a value <code>a</code> such that <code>f(a) == a</code>.
+One way to define the fixed point function is provided in <a href="https://mitpress.mit.edu/sites/default/files/sicp/full-text/book/book-Z-H-12.html#%25_sec_1.3.3">sicp</a>.
+We can translate that to Rust almost verbatim by adding in the right types.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">const</span><span class="w"> </span><span class="n">TOLERANCE</span>: <span class="kt">f64</span> <span class="o">=</span><span class="w"> </span><span class="mf">0.000001</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">fixed_point</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span>: <span class="nc">F</span><span class="p">,</span><span class="w"> </span><span class="n">first_guess</span>: <span class="kt">f64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">f64</span>
+    <span class="nc">where</span><span class="w"> </span><span class="n">F</span>: <span class="nb">Fn</span><span class="p">(</span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">f64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="c1">// Check if v1 and v2 are close enough to be considered equal
+</span><span class="c1"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">close_enough</span><span class="p">(</span><span class="n">v1</span>: <span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">v2</span>: <span class="kt">f64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">bool</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="p">(</span><span class="n">v2</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">v1</span><span class="p">)</span><span class="p">.</span><span class="n">abs</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="o">&lt;</span><span class="w"> </span><span class="n">TOLERANCE</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="c1">// Call f(guess) and see if it is close enough to guess. If so
+</span><span class="c1"></span><span class="w">    </span><span class="c1">// we have found the fix point of f
+</span><span class="c1"></span><span class="w">    </span><span class="k">fn</span> <span class="nf">try_guess</span><span class="o">&lt;</span><span class="n">F</span><span class="o">&gt;</span><span class="p">(</span><span class="n">guess</span>: <span class="kt">f64</span><span class="p">,</span><span class="w"> </span><span class="n">f</span>: <span class="nc">F</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">f64</span> 
+        <span class="nc">where</span><span class="w"> </span><span class="n">F</span>: <span class="nb">Fn</span><span class="p">(</span><span class="kt">f64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">f64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="kd">let</span><span class="w"> </span><span class="n">next</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="n">f</span><span class="p">(</span><span class="n">guess</span><span class="p">)</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="k">if</span><span class="w"> </span><span class="n">close_enough</span><span class="p">(</span><span class="n">guess</span><span class="p">,</span><span class="w"> </span><span class="n">next</span><span class="p">)</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">            </span><span class="n">guess</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="p">}</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">            </span><span class="n">try_guess</span><span class="p">(</span><span class="n">next</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">try_guess</span><span class="p">(</span><span class="n">first_guess</span><span class="p">,</span><span class="w"> </span><span class="n">f</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">sqrt</span><span class="p">(</span><span class="n">x</span>: <span class="kt">f64</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">f64</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">fixed_point</span><span class="p">(</span><span class="o">|</span><span class="n">y</span><span class="o">|</span><span class="w"> </span><span class="p">(</span><span class="n">y</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">x</span><span class="o">/</span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="mf">2.0</span><span class="p">,</span><span class="w"> </span><span class="mf">1.0</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>How about functions returning functions? One way is to return a closure, but it requires little more work
+that you would expect. For example, consider the <code>compose</code> function that composes two functions <code>f</code> and <code>g</code>:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">compose</span><span class="o">&lt;</span><span class="n">X</span><span class="p">,</span><span class="w"> </span><span class="n">Y</span><span class="p">,</span><span class="w"> </span><span class="n">Z</span><span class="p">,</span><span class="w"> </span><span class="n">F</span><span class="p">,</span><span class="w"> </span><span class="n">G</span><span class="o">&gt;</span><span class="p">(</span><span class="n">f</span>: <span class="nc">F</span><span class="p">,</span><span class="w"> </span><span class="n">g</span>: <span class="nc">G</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">impl</span><span class="w"> </span><span class="nb">Fn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Z</span><span class="w">
+</span><span class="w"></span><span class="k">where</span><span class="w"> </span><span class="n">F</span>: <span class="nb">Fn</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Y</span><span class="p">,</span><span class="w"> </span><span class="n">G</span>: <span class="nb">Fn</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Z</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="k">move</span><span class="w"> </span><span class="o">|</span><span class="n">x</span><span class="o">|</span><span class="w"> </span><span class="n">g</span><span class="p">(</span><span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>This might look unfamiliar, so lets go through it:</p>
+<ul>
+<li><code>X, Y, Z, F and G</code> are type parameters. <code>F</code> is type of a function that takes an argument of type <code>X</code> and returns <code>Y</code> etc.</li>
+<li><code>impl Fn(X) -&gt; Z</code>: The function returns a closure. Since the actual type that is returned might vary per call
+(each closure is of a different type since the capturing variables might differ), we need to tell compiler that what we really return is an implementation of the <code>Fn</code> trait.</li>
+<li><code>move</code> This is related to ownership. Since we return a closure, we don't know when that is called and its lifetime may outlive the function. So the closure needs to own
+the variables instead of borrowing it. This might seem confusing at first, but rust compiler has excellent <a href="https://doc.rust-lang.org/error-index.html#E0373">error messages</a> to guide you here.</li>
+</ul>
+<p>Note: <code>Fn</code> is not the only function type. There is also <a href="https://doc.rust-lang.org/std/ops/trait.FnOnce.html">FnOnce</a> which only can be called once, and <a href="https://doc.rust-lang.org/std/ops/trait.FnMut.html">FnMut</a>
+which allows the closure to mutate state.</p>
+<h2 id="conclusion"><a href="#conclusion" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Conclusion</h2>
+<p>Hope you got a basic taste of functional programming in Rust. Rust has pretty good support for functional programming
+compared to languages like Java or C++, but not as much as a pure functional language like Haskell.
+Rust is a good choice if performance and reliability
+are what you are after with good support for building composable software. It has excellent <a href="https://doc.rust-lang.org/">documentation</a>, good community and a
+friendly compiler.</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-07-28-a-functional-design-pattern/" class="related-link">A functional design pattern</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-03-06-priority-queue/" class="related-link">Purely functional Priority Queue</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-24-augmented-data/" class="related-link">Drawing Trees</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/rust/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>rust</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/2014-07-28-a-functional-design-pattern/" rel="next">A functional design pattern ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

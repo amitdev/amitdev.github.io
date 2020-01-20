@@ -1,0 +1,712 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>A basic, immutable Stack in Scala | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="Scala was one language that I played around with many years back (and blogged about then). Recently, I took the excellent course on reactive programming which rekindled my interest in Scala and I decided to brush up my knowledge on it as well as functional programming." />
+    <meta name="keywords" content="programming, functional-programming, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/posts/2013-12-31-functional-stack/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2013-12-31T00:00:00+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/posts/2013-12-31-functional-stack/",
+        "headline": "A basic, immutable Stack in Scala",
+        "description": "Scala was one language that I played around with many years back (and blogged about then). Recently, I took the excellent course on reactive programming which rekindled my interest in Scala and I decided to brush up my knowledge on it as well as functional programming.",
+        "keywords": "programming, functional-programming, scala",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  1447 ,
+        "image": ["https://example.com/images/one.png","https://example.com/images/two.png","https://example.com/images/one.png","https://example.com/images/sa1.png","https://example.com/images/sa2.png"],
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://example.com/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary_large_image" />
+
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="A basic, immutable Stack in Scala" />
+<meta property="og:description" content="Scala was one language that I played around with many years back (and blogged about then). Recently, I took the excellent course on reactive programming which rekindled my interest in Scala and I decided to brush up my knowledge on it as well as functional programming." />
+<meta property="og:url" content="https://example.com/posts/2013-12-31-functional-stack/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/images/one.png" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2013-12-31T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-01-20T12:57:26+11:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, scala" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">A basic, immutable Stack in Scala</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2013-12-31T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2013.12.31</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1447</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;7&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p><a href="http://scala-lang.org/">Scala</a> was one language that I played around with many years back (and <a href="http://memuser.blogspot.in/search/label/Scala">blogged</a> about then). Recently, I took the excellent <a href="https://www.coursera.org/course/reactive">course</a> on reactive programming which rekindled my interest in Scala and I decided to brush up my knowledge on it as well as functional programming. I also happen to be reading what seems to be the best resource on functional data structures - Chris Okasaki's <a href="http://www.amazon.com/Purely-Functional-Structures-Chris-Okasaki/dp/0521663504">Purely Functional Data Structures</a>. This blog is an introduction on how to implement some of those data structures in Scala. Since Scala is a general purpose programming language with an objective to fuse object oriented and functional programming, our implementation will follow that approach. It is also possible to do pure functional programming in Scala without bringing in object orientation, but that's not our focus here. So I'll call this implementation object-functional versus purely functional, but the properties are the same, the differences are only in the way code is organized.</p>
+<h2 id="stack"><a href="#stack" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Stack</h2>
+<p style="text-indent:0"><span class="drop-cap">W</span>e start with implementation of a really simple data structure. It is a container which supports the following operation:</p>
+<ul>
+<li><code>cons</code>: adds a new item to the container</li>
+<li><code>head</code> : get last inserted item</li>
+<li><code>tail</code> : get rest of the items</li>
+<li><code>isEmpty</code>: the container is empty or not</li>
+</ul>
+<p>You can think of it as a <a href="http://en.wikipedia.org/wiki/Cons">cons list</a> or Stack as Okasaki calls it. Before thinking about implementation, we can capture the behavior in a Trait like so:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">isEmpty</span><span class="k">:</span> <span class="kt">Boolean</span>
+  <span class="k">def</span> <span class="n">cons</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">T</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">head</span><span class="k">:</span> <span class="kt">T</span>
+  <span class="k">def</span> <span class="n">tail</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="digression-variance"><a href="#digression-variance" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Digression: Variance</h2>
+<p>In Scala, the type parameters are invariant by default, which means if you have a <code>Stack[Shape]</code>, you cannot add a <code>Circle</code> to it though <code>Circle</code> is a subclass of <code>Shape</code>. For immutable collections it is better to have this behavior, so we need to make it covariant which can be easily done by adding a <code>+</code> to the type parameter. When you do that, <code>Stack[Shape]</code> will behave like a superclass of <code>Stack[Circle]</code>. But this also means that the following is possible:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">onlyCircles</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Circle</span><span class="o">]</span> <span class="k">=</span> <span class="o">.</span><span class="o">.</span><span class="o">.</span>
+<span class="k">val</span> <span class="n">shapes</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">Shape</span><span class="o">]</span> <span class="k">=</span> <span class="n">onlyCircles</span>
+<span class="n">shapes</span><span class="o">.</span><span class="n">cons</span><span class="o">(</span><span class="k">new</span> <span class="nc">Square</span><span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This is clearly a problem so Scala compiler will prevent you from creating such an <code>cons</code> function. In the example above, <code>cons</code> should ensure that it only accepts a <code>Circle</code> or its subclass. This can be specified by constraining its type to <code>[U &gt;: T]</code> where <code>T</code> is the type parameter for <code>Stack</code>. This is the intuition behind variance (we skipped contravariance) and if you are interested, read more <a href="http://twitter.github.io/scala_school/type-basics.html#variance">here</a>.</p>
+<p>Armed with the idea of variance, we can make our <code>Stack</code> trait more general:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">trait</span> <span class="nc">Stack</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">isEmpty</span><span class="k">:</span> <span class="kt">Boolean</span>
+  <span class="k">def</span> <span class="n">cons</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">head</span><span class="k">:</span> <span class="kt">T</span>
+  <span class="k">def</span> <span class="n">tail</span><span class="k">:</span> <span class="kt">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="implementation"><a href="#implementation" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Implementation</h2>
+<p>One way to implement <code>Stack</code> is to consider two cases. A <code>Stack</code> could be empty or it could have a head and tail. Further, empty can be a singleton and we introduce an abstract class <code>CList</code> to represent this particular implementation:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">cons</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">Cons</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">object</span> <span class="nc">Empty</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">isEmpty</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">true</span>
+  <span class="k">def</span> <span class="n">head</span><span class="k">:</span> <span class="kt">Nothing</span> <span class="o">=</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span><span class="o">(</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">tail</span><span class="k">:</span> <span class="kt">Nothing</span> <span class="o">=</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">NoSuchElementException</span><span class="o">(</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Cons</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">hd</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">tl</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">isEmpty</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="kc">false</span>
+  <span class="k">def</span> <span class="n">head</span><span class="k">:</span> <span class="kt">T</span> <span class="o">=</span> <span class="n">hd</span>
+  <span class="k">def</span> <span class="n">tail</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="k">=</span> <span class="n">tl</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Given this, one could create a Stack like:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">stack</span> <span class="k">=</span> <span class="nc">Cons</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span> <span class="nc">Cons</span><span class="o">(</span><span class="mi">2</span><span class="o">,</span> <span class="nc">Empty</span><span class="o">)</span><span class="o">)</span> <span class="c1">// head = 1, tail = [2]
+</span></code></pre></td></tr></table>
+</div>
+</div><h2 id="persistent"><a href="#persistent" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Persistent</h2>
+<p>An important property of functional data structures is that they are immutable, any change on them would give us a new copy. This may not be as bad as it sounds since the structure can be often shared. For instance, if we have a list:</p>
+<p><img src="/images/one.png" alt="drawing"></p>
+<p>and we append <code>0</code> to it, we get a new list:</p>
+<p><img src="/images/two.png" alt="drawing"></p>
+<p>but the tail of second list is just a pointer to first list (in the image, only <code>0</code> is a new node as the color shows), so no extra space is required. If we insert an element in between, the elements till that needs to be copied but rest can be shared. If we append two lists, <code>xs</code> and <code>ys</code>, all elements in <code>xs</code> needs to be copied but <code>ys</code> can be shared:</p>
+<p><img src="/images/one.png" alt="drawing"> ++
+<img src="/images/sa1.png" alt="drawing"> ==
+<img src="/images/sa2.png" alt="drawing"></p>
+<p>There are ways to optimize this to minimize copying.</p>
+<p>But keeping things immutable has many <a href="http://stackoverflow.com/questions/4399837/what-is-the-benefit-of-purely-functional-data-structure">advantages</a>. One particular benefit is even after updates the previous &lsquo;version&rsquo; of the data structure is available since we don't modify anything. For this reason, functional data structures are also called persistent.</p>
+<h2 id="other-operations"><a href="#other-operations" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Other operations</h2>
+<p>The implementation we have so far is trivial and we can add other operations:</p>
+<ul>
+<li><code>update</code>: inserts an element at a given index.</li>
+<li><code>++</code>: catenates two Stacks together</li>
+</ul>
+<p>The implementation for this is straightforward. We just need to handle the two cases. Let's also add a <code>toList</code> function to convert this to Scala <code>List</code> for debugging.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="o">++</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">ys</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">U</span><span class="o">,</span> <span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span>
+  <span class="k">def</span> <span class="n">toList</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">object</span> <span class="nc">Empty</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="o">++</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">(</span><span class="n">ys</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="n">ys</span>
+  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">U</span><span class="o">,</span> <span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=</span> <span class="k">throw</span> <span class="k">new</span> <span class="nc">IndexOutOfBoundsException</span><span class="o">(</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">toList</span> <span class="k">=</span> <span class="nc">Nil</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Cons</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">hd</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">tl</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="o">++</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">ys</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Cons</span><span class="o">(</span><span class="n">head</span><span class="o">,</span> <span class="n">tail</span> <span class="o">++</span> <span class="n">ys</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">update</span><span class="o">[</span><span class="kt">U</span> <span class="k">&gt;:</span> <span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">t</span><span class="k">:</span> <span class="kt">U</span><span class="o">,</span> <span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">U</span><span class="o">]</span> <span class="k">=</span> <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">==</span> <span class="mi">0</span><span class="o">)</span> <span class="nc">Cons</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="k">this</span><span class="o">)</span> <span class="k">else</span> <span class="nc">Cons</span><span class="o">(</span><span class="n">head</span><span class="o">,</span> <span class="n">tail</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="o">)</span><span class="o">)</span>
+  <span class="k">def</span> <span class="n">toList</span> <span class="k">=</span> <span class="n">head</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">tail.toList</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Note that the <code>update</code> and <code>++</code> operations return a new Stack which potentially shares the structure of old Stack as we discussed before.</p>
+<h2 id="digression-testing"><a href="#digression-testing" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Digression: Testing</h2>
+<p>Now that we have written some code, how do we test it? We need to have some test data and unit tests for testing Stack. Also we need to test for <code>Empty</code> and <code>Cons</code> case separately. Instead of writing specific test cases, let's use <a href="http://www.scalacheck.org/">Scalacheck</a>. Scalacheck basically allows us to assert properties or invariants about the data structure and it takes care of generating random data for us.</p>
+<p>Since we have a new data structure, which Scalacheck does not know about, we need to describe how to generate data. One way to do it is:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">implicit</span> <span class="k">def</span> <span class="n">arbStack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="n">a</span><span class="k">:</span> <span class="kt">Arbitrary</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">Arbitrary</span><span class="o">[</span><span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Arbitrary</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">genStack</span><span class="k">:</span> <span class="kt">Gen</span><span class="o">[</span><span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="n">oneOf</span><span class="o">(</span><span class="nc">Empty</span><span class="o">,</span> <span class="k">for</span> <span class="o">{</span>
+    <span class="n">v</span> <span class="k">&lt;-</span> <span class="n">arbitrary</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span>
+    <span class="n">s</span> <span class="k">&lt;-</span> <span class="n">genStack</span>
+  <span class="o">}</span> <span class="k">yield</span> <span class="n">s</span><span class="o">.</span><span class="n">cons</span><span class="o">(</span><span class="n">v</span><span class="o">)</span><span class="o">)</span>
+  <span class="n">genStack</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>It might look a bit complicated, but all it is doing is describing how we can construct arbitrary Stacks. Once this is done, we can start writing our tests by just describing properties:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">test</span><span class="o">(</span><span class="s">&#34;Stack head&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="o">.</span><span class="n">cons</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">.</span><span class="n">head</span> <span class="o">==</span> <span class="n">x</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="n">test</span><span class="o">(</span><span class="s">&#34;Stack tail&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">s</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">s</span><span class="o">.</span><span class="n">cons</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">.</span><span class="n">tail</span> <span class="o">==</span> <span class="n">s</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="n">test</span><span class="o">(</span><span class="s">&#34;Stack append&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">ys</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span> <span class="o">++</span> <span class="n">ys</span><span class="o">)</span> <span class="o">==</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span><span class="o">)</span> <span class="o">+</span> <span class="n">size</span><span class="o">(</span><span class="n">ys</span><span class="o">)</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="n">test</span><span class="o">(</span><span class="s">&#34;Stack update&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">i</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">i</span> <span class="o">&gt;=</span> <span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="n">i</span> <span class="o">&lt;</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span><span class="o">)</span><span class="o">)</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span><span class="o">)</span> <span class="o">==</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span><span class="o">)</span><span class="o">+</span><span class="mi">1</span>
+    <span class="k">else</span> <span class="k">try</span> <span class="o">{</span>
+      <span class="n">xs</span><span class="o">.</span><span class="n">update</span><span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">i</span><span class="o">)</span>
+      <span class="kc">false</span>
+    <span class="o">}</span> <span class="k">catch</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="k">_</span><span class="k">:</span><span class="kt">IndexOutOfBoundsException</span> <span class="o">=&gt;</span> <span class="kc">true</span>
+    <span class="o">}</span>
+  <span class="o">}</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Note that we did not provide any sample <code>CList</code>. ScalaCheck will do that for us by testing with various randomly generated <code>CList</code>.</p>
+<h2 id="exercise"><a href="#exercise" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Exercise</h2>
+<p>Implementing a <code>suffixes</code> operation is provided as an exercise - given a <code>Stack</code> generate all its suffices. So suffixes of <code>[1,2,3]</code> should be <code>[[1,2,3], [2,3], [3], []]</code>. It has to be generating in decreasing order of size. Given our classes, this can be easily done:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">sealed</span> <span class="k">abstract</span> <span class="k">class</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span> <span class="nc">extends</span> <span class="nc">Stack</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">suffixes</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">object</span> <span class="nc">Empty</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">Nothing</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">suffixes</span> <span class="k">=</span> <span class="nc">Cons</span><span class="o">(</span><span class="nc">Empty</span><span class="o">,</span> <span class="nc">Empty</span><span class="o">)</span>
+<span class="o">}</span>
+
+<span class="k">case</span> <span class="k">class</span> <span class="nc">Cons</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">hd</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">tl</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">suffixes</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">CList</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Cons</span><span class="o">(</span><span class="k">this</span><span class="o">,</span> <span class="n">tail</span><span class="o">.</span><span class="n">suffixes</span><span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>and a simple test which passes:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="n">test</span><span class="o">(</span><span class="s">&#34;Stack suffixes&#34;</span><span class="o">)</span> <span class="o">{</span>
+  <span class="n">check</span><span class="o">(</span><span class="o">(</span><span class="n">xs</span><span class="k">:</span> <span class="kt">CList</span><span class="o">[</span><span class="kt">Int</span><span class="o">]</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="o">{</span>
+    <span class="k">val</span> <span class="n">suffixes</span> <span class="k">=</span> <span class="n">xs</span><span class="o">.</span><span class="n">suffixes</span>
+    <span class="n">size</span><span class="o">(</span><span class="n">suffixes</span><span class="o">)</span> <span class="o">==</span> <span class="n">size</span><span class="o">(</span><span class="n">xs</span><span class="o">)</span> <span class="o">+</span> <span class="mi">1</span>
+  <span class="o">}</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>That is all for a basic implementation of <code>Stack</code>. See the complete code for <a href="https://github.com/amitdev/functional-ds/blob/master/src/main/scala/ds/Stack.scala">Stack</a> and the <a href="https://github.com/amitdev/functional-ds/blob/master/src/test/scala/StackTest.scala">test</a>. We could add many operations like <code>map</code>, <code>filter</code> etc in a similar way. If you are interested, take a look a Scala's implementation of <a href="https://github.com/scala/scala/blob/master/src/library/scala/collection/immutable/List.scala">List</a> which is more general and feature rich.</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-03-06-priority-queue/" class="related-link">Purely functional Priority Queue</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-24-augmented-data/" class="related-link">Drawing Trees</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-20-functional-set/" class="related-link">A basic, immutable Set in Scala</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/scala/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>scala</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/2014-01-20-functional-set/" rel="prev">< A basic, immutable Set in Scala</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/first-post/" rel="next">Moving in from Blogger ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

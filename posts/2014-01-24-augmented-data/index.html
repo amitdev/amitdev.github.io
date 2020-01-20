@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>Drawing Trees | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="In the last article we saw one way of implementing Binary Search Trees and Red Black Trees. This data structure can be used to implement a Set (like we saw before), but there are many other use cases if we can augment the data stored on the nodes." />
+    <meta name="keywords" content="programming, functional-programming, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/posts/2014-01-24-augmented-data/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2014-01-24T00:00:00+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/posts/2014-01-24-augmented-data/",
+        "headline": "Drawing Trees",
+        "description": "In the last article we saw one way of implementing Binary Search Trees and Red Black Trees. This data structure can be used to implement a Set (like we saw before), but there are many other use cases if we can augment the data stored on the nodes.",
+        "keywords": "programming, functional-programming, scala",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  828 ,
+        "image": ["https://example.com/images/r.svg"],
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://example.com/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary_large_image" />
+
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="Drawing Trees" />
+<meta property="og:description" content="In the last article we saw one way of implementing Binary Search Trees and Red Black Trees. This data structure can be used to implement a Set (like we saw before), but there are many other use cases if we can augment the data stored on the nodes." />
+<meta property="og:url" content="https://example.com/posts/2014-01-24-augmented-data/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://example.com/images/r.svg" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2014-01-24T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-01-20T12:57:26+11:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, scala" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">Drawing Trees</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2014-01-24T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2014.1.24</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;828</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;4&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p style="text-indent:0"><span class="drop-cap">I</span>n the <a href="/posts/2014-01-20-functional-sets/">last article</a> we saw one way of implementing Binary Search Trees and Red Black Trees. This data structure can be used to implement a Set (like we saw before), but there are many other use cases if we can <em>augment</em> the data stored on the nodes. One example is a TreeMap which is a key-value store - similar to HashMap but with <em>log(n)</em> time guarantee for operations. Other <a href="http://ocw.mit.edu/courses/electrical-engineering-and-computer-science/6-046j-introduction-to-algorithms-sma-5503-fall-2005/video-lectures/lecture-11-augmenting-data-structures-dynamic-order-statistics-interval-trees/lec11.pdf">examples</a> are Interval trees, dynamic order statistics etc.</p>
+<h2 id="how-to-augment-the-data"><a href="#how-to-augment-the-data" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>How to Augment the Data</h2>
+<p>Recall that a <code>Node</code> in our RBT looked like the following:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Node</span><span class="o">[</span><span class="kt">+</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">color</span><span class="k">:</span> <span class="kt">Color</span><span class="o">,</span> <span class="n">v</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">left</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">right</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>One way to augment the data is to subclass <code>Node</code> and add relevant data to that class. But there is a simpler approach. Note that in the above declaration, the data stored has an abstract type <code>T</code> whose only constraint is that it should be <code>Orderable</code>. So we could package all the data we need in <code>T</code> itself and provide appropriate ordering logic. For example, in case of a TreeMap, <code>T</code> can be a pair of (K, V) so that ordering is only done on K. A generic <code>AugmentedData</code> class can be written as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">AugmentedData</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span>, <span class="kt">U</span><span class="o">]</span><span class="o">(</span><span class="n">v</span><span class="k">:</span> <span class="kt">T</span><span class="o">,</span> <span class="n">data</span><span class="k">:</span> <span class="kt">U</span><span class="o">)</span>
+                              <span class="k">extends</span> <span class="nc">Ordered</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="kt">U</span><span class="o">]</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">compare</span><span class="o">(</span><span class="n">that</span><span class="k">:</span> <span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="kt">U</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="k">this</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">compare</span><span class="o">(</span><span class="n">that</span><span class="o">.</span><span class="n">v</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>So an <code>AugmentedData</code> would have a value <code>v</code> which is orderable and additional <code>data</code> of some type <code>U</code>.</p>
+<h2 id="example---drawing-trees"><a href="#example---drawing-trees" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Example - Drawing Trees</h2>
+<p>Let's look at an example where we augment data. Let's say we need to draw a given RBT (or BST). There are two logical steps to it:</p>
+<ul>
+<li>Identify position of each Node in the picture</li>
+<li>Draw the picture</li>
+</ul>
+<p>We separate these two steps because drawing a picture can be done in different ways - as an image, in a terminal etc.</p>
+<h3 id="step-1---finding-positions"><a href="#step-1---finding-positions" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Step 1 - Finding positions</h3>
+<p>First we need to Augment the data stored in a <code>Node</code> to include its position (x,y) as well. Then we need to find and populate the positions.</p>
+<p>We could just use the depth of a node in the tree as its vertical position (y-coordinate). Finding a horizontal position (x-coordinate) is slightly tricky and there are many different ways to do it. We will use the simple approach of taking a node's position in the inorder traversal of the tree. By definition, node on the left comes first and will have a lower x coordinate value than its root which will be lesser than its right child etc. This is not the best approach but suffices for our discussion.</p>
+<p>We are going to define a function which takes a RBT node and gives back an RBT node which is the root of tree with augmented data. So it will look like:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">toPos</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">d</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">80</span><span class="o">,</span> <span class="n">start</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">30</span><span class="o">)</span> <span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="o">???</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>It has two additional parameters; to adjust the space between nodes: <code>d</code> and start position: <code>start</code>. To simplify things, we can use a helper function <code>calcPos</code> which finds the position and propogates it back.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">toPos</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">d</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">80</span><span class="o">,</span> <span class="n">start</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">30</span><span class="o">)</span> <span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">def</span> <span class="n">calcPos</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span> <span class="k">:</span> <span class="o">(</span><span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span><span class="o">,</span> <span class="nc">Int</span><span class="o">)</span> <span class="k">=</span> <span class="o">{</span>
+    <span class="n">n</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">Leaf</span> <span class="k">=&gt;</span> <span class="o">(</span><span class="nc">Leaf</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span>
+      <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="n">v</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="k">val</span> <span class="o">(</span><span class="n">leftTree</span><span class="o">,</span> <span class="n">myX</span><span class="o">)</span> <span class="k">=</span> <span class="n">calcPos</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">+</span><span class="n">d</span><span class="o">)</span>
+        <span class="k">val</span> <span class="o">(</span><span class="n">rightTree</span><span class="o">,</span> <span class="n">nextX</span><span class="o">)</span> <span class="k">=</span> <span class="n">calcPos</span><span class="o">(</span><span class="n">right</span><span class="o">,</span> <span class="n">myX</span><span class="o">+</span><span class="n">d</span><span class="o">,</span> <span class="n">y</span><span class="o">+</span><span class="n">d</span><span class="o">)</span>
+        <span class="o">(</span><span class="nc">Node</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="nc">AugmentedData</span><span class="o">(</span><span class="n">v</span><span class="o">,</span> <span class="o">(</span><span class="n">myX</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span><span class="o">)</span><span class="o">,</span> <span class="n">leftTree</span><span class="o">,</span> <span class="n">rightTree</span><span class="o">)</span><span class="o">,</span> <span class="n">nextX</span><span class="o">)</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+  <span class="n">calcPos</span><span class="o">(</span><span class="n">node</span><span class="o">,</span> <span class="n">start</span><span class="o">,</span> <span class="n">start</span><span class="o">)</span><span class="o">.</span><span class="n">_1</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h3 id="step-2---drawing-the-tree"><a href="#step-2---drawing-the-tree" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Step 2 - Drawing the Tree</h3>
+<p>Once we have the positions, drawing a tree is trivial. A natural way to represent the tree is using <a href="http://en.wikipedia.org/wiki/Scalable_Vector_Graphics">SVG</a> format. Since it is xml the tree structure can be directly represented. Scala also support XML literals which makes things easier.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span><span class="lnt">28
+</span><span class="lnt">29
+</span><span class="lnt">30
+</span><span class="lnt">31
+</span><span class="lnt">32
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">toSvg</span><span class="o">[</span><span class="kt">T</span> <span class="kt">:</span> <span class="kt">Orderable</span><span class="o">]</span><span class="o">(</span><span class="n">node</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span><span class="o">,</span>
+                         <span class="n">width</span> <span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">640</span><span class="o">,</span> <span class="n">height</span> <span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">480</span><span class="o">)</span><span class="k">:</span> <span class="kt">NodeSeq</span> <span class="o">=</span> <span class="o">{</span>
+
+  <span class="k">val</span> <span class="n">rgb</span> <span class="k">=</span> <span class="nc">Map</span><span class="o">[</span><span class="kt">Color</span>, <span class="kt">String</span><span class="o">]</span><span class="o">(</span><span class="nc">Black</span> <span class="o">-&gt;</span> <span class="s">&#34;#000000&#34;</span><span class="o">,</span> <span class="nc">Red</span> <span class="o">-&gt;</span> <span class="s">&#34;#7f0000&#34;</span><span class="o">)</span>
+
+  <span class="k">def</span> <span class="n">genNode</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span><span class="o">,</span> <span class="n">x</span><span class="k">:</span> <span class="kt">Int</span><span class="o">,</span> <span class="n">y</span><span class="k">:</span> <span class="kt">Int</span><span class="o">)</span><span class="k">:</span> <span class="kt">NodeSeq</span> <span class="o">=</span>
+    <span class="n">n</span> <span class="k">match</span> <span class="o">{</span>
+      <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="nc">AugmentedData</span><span class="o">(</span><span class="k">_</span><span class="o">,</span> <span class="o">(</span><span class="n">lx</span><span class="o">,</span> <span class="n">ly</span><span class="o">)</span><span class="o">)</span><span class="o">,</span> <span class="k">_</span><span class="o">,</span> <span class="k">_</span><span class="o">)</span> <span class="k">=&gt;</span>
+        <span class="o">&lt;</span><span class="n">line</span> <span class="n">id</span><span class="o">=</span><span class="s">&#34;svg_1&#34;</span> <span class="n">y2</span><span class="o">=</span><span class="o">{</span><span class="n">y</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">x2</span><span class="o">=</span><span class="o">{</span><span class="n">x</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">y1</span><span class="o">=</span><span class="o">{</span><span class="n">ly</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span>
+              <span class="n">x1</span><span class="o">=</span><span class="o">{</span><span class="n">lx</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="s">&#34;3&#34;</span> <span class="n">stroke</span><span class="o">=</span><span class="s">&#34;#000000&#34;</span> <span class="n">fill</span><span class="o">=</span><span class="s">&#34;none&#34;</span><span class="o">/&gt;</span> <span class="o">++</span>
+        <span class="n">genSvg</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
+      <span class="k">case</span> <span class="nc">Leaf</span> <span class="k">=&gt;</span> <span class="o">&lt;!--</span> <span class="n">leaf</span> <span class="o">--&gt;</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">genSvg</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">RBT</span><span class="o">[</span><span class="kt">AugmentedData</span><span class="o">[</span><span class="kt">T</span>, <span class="o">(</span><span class="kt">Int</span>, <span class="kt">Int</span><span class="o">)</span><span class="o">]</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">NodeSeq</span> <span class="o">=</span> <span class="n">n</span> <span class="k">match</span> <span class="o">{</span>
+    <span class="k">case</span> <span class="nc">Node</span><span class="o">(</span><span class="n">c</span><span class="o">,</span> <span class="nc">AugmentedData</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="o">(</span><span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span><span class="o">)</span><span class="o">,</span> <span class="n">left</span><span class="o">,</span> <span class="n">right</span><span class="o">)</span> <span class="k">=&gt;</span>
+      <span class="n">genNode</span><span class="o">(</span><span class="n">left</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span> <span class="o">++</span>
+      <span class="n">genNode</span><span class="o">(</span><span class="n">right</span><span class="o">,</span> <span class="n">x</span><span class="o">,</span> <span class="n">y</span><span class="o">)</span> <span class="o">++</span>
+      <span class="o">&lt;</span><span class="n">ellipse</span> <span class="n">stroke</span><span class="o">=</span><span class="o">{</span><span class="n">rgb</span><span class="o">(</span><span class="n">c</span><span class="o">)</span><span class="o">}</span> <span class="n">fill</span><span class="o">=</span><span class="o">{</span><span class="n">rgb</span><span class="o">(</span><span class="n">c</span><span class="o">)</span><span class="o">}</span> <span class="n">cy</span><span class="o">=</span><span class="o">{</span><span class="n">y</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">cx</span><span class="o">=</span><span class="o">{</span><span class="n">x</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span>
+               <span class="n">ry</span><span class="o">=</span><span class="s">&#34;20&#34;</span> <span class="n">rx</span><span class="o">=</span><span class="s">&#34;20&#34;</span> <span class="n">stroke</span><span class="o">-</span><span class="n">width</span><span class="o">=</span><span class="s">&#34;5&#34;</span><span class="o">/&gt;</span> <span class="o">++</span>
+      <span class="o">&lt;</span><span class="n">text</span> <span class="n">xml</span><span class="k">:</span><span class="kt">space</span><span class="o">=</span><span class="s">&#34;preserve&#34;</span> <span class="n">text</span><span class="o">-</span><span class="n">anchor</span><span class="o">=</span><span class="s">&#34;middle&#34;</span> <span class="n">font</span><span class="o">-</span><span class="n">family</span><span class="o">=</span><span class="s">&#34;serif&#34;</span>
+            <span class="n">font</span><span class="o">-</span><span class="n">size</span><span class="o">=</span><span class="s">&#34;24&#34;</span> <span class="n">y</span><span class="o">=</span><span class="o">{</span><span class="o">(</span><span class="n">y</span><span class="o">+</span><span class="mi">7</span><span class="o">)</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">x</span><span class="o">=</span><span class="o">{</span><span class="n">x</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">stroke</span><span class="o">=</span><span class="s">&#34;#ffffff&#34;</span>
+            <span class="n">fill</span><span class="o">=</span><span class="s">&#34;#ffffff&#34;</span><span class="o">&gt;</span><span class="o">{</span><span class="n">t</span><span class="o">}</span><span class="o">&lt;/</span><span class="n">text</span><span class="o">&gt;</span>
+    <span class="k">case</span> <span class="nc">Leaf</span> <span class="k">=&gt;</span> <span class="o">&lt;!--</span> <span class="n">leaf</span> <span class="o">--&gt;</span>
+  <span class="o">}</span>
+  <span class="o">&lt;</span><span class="n">svg</span> <span class="n">width</span><span class="o">=</span><span class="o">{</span><span class="n">width</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">height</span><span class="o">=</span><span class="o">{</span><span class="n">height</span><span class="o">.</span><span class="n">toString</span><span class="o">}</span> <span class="n">xmlns</span><span class="o">=</span><span class="s">&#34;http://www.w3.org/2000/svg&#34;</span><span class="o">&gt;</span>
+    <span class="o">&lt;</span><span class="n">g</span><span class="o">&gt;</span>
+      <span class="o">&lt;</span><span class="n">title</span><span class="o">&gt;</span><span class="nc">RBT</span><span class="o">&lt;/</span><span class="n">title</span><span class="o">&gt;</span>
+      <span class="o">{</span><span class="n">genSvg</span><span class="o">(</span><span class="n">node</span><span class="o">)</span><span class="o">}</span>
+    <span class="o">&lt;/</span><span class="n">g</span><span class="o">&gt;</span>
+  <span class="o">&lt;/</span><span class="n">svg</span><span class="o">&gt;</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>This produces svg images like the following:</p>
+<img src="/images/r.svg" alt="1" style="width: 50%; height: 50%"/>
+<p>See the complete code <a href="https://github.com/amitdev/functional-ds/blob/master/src/main/scala/ds/SetUtil.scala">here</a>.</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-03-06-priority-queue/" class="related-link">Purely functional Priority Queue</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-20-functional-set/" class="related-link">A basic, immutable Set in Scala</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2013-12-31-functional-stack/" class="related-link">A basic, immutable Stack in Scala</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/scala/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>scala</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/2014-03-06-priority-queue/" rel="prev">< Purely functional Priority Queue</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/2014-01-20-functional-set/" rel="next">A basic, immutable Set in Scala ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>

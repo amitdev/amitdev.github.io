@@ -1,0 +1,688 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>Purely functional Priority Queue | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="This is part of a series of articles on implementing various functional data structures in Scala. See other articles in this series:
+ Functional Stacks Functional Sets  In this part we will implement a basic Priority Queue in Scala. It will support the following operations efficiently:" />
+    <meta name="keywords" content="programming, functional-programming, scala" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://example.com/posts/2014-03-06-priority-queue/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2014-03-06T00:00:00+00:00",
+        "dateModified": "2020-01-20T12:57:26+11:00",
+        "url": "https://example.com/posts/2014-03-06-priority-queue/",
+        "headline": "Purely functional Priority Queue",
+        "description": "This is part of a series of articles on implementing various functional data structures in Scala. See other articles in this series:\n Functional Stacks Functional Sets  In this part we will implement a basic Priority Queue in Scala. It will support the following operations efficiently:",
+        "keywords": "programming, functional-programming, scala",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  1329 ,
+        "image": ["http://upload.wikimedia.org/wikipedia/commons/c/cf/Binomial_Trees.svg","https://example.com/images/bt.svg","https://example.com/images/bh3.svg"],
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://example.com/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://example.com/icons/apple-touch-icon.png"
+            },
+            "url": "https://example.com/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://example.com/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary_large_image" />
+
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="Purely functional Priority Queue" />
+<meta property="og:description" content="This is part of a series of articles on implementing various functional data structures in Scala. See other articles in this series:
+ Functional Stacks Functional Sets  In this part we will implement a basic Priority Queue in Scala. It will support the following operations efficiently:" />
+<meta property="og:url" content="https://example.com/posts/2014-03-06-priority-queue/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="http://upload.wikimedia.org/wikipedia/commons/c/cf/Binomial_Trees.svg" />
+<meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2014-03-06T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-01-20T12:57:26+11:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, scala" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">Purely functional Priority Queue</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2014-03-06T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2014.3.6</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1329</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;7&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p style="text-indent:0"><span class="drop-cap">T</span>his is part of a series of articles on implementing various functional data structures in Scala. See other articles in this series:</p>
+<ul>
+<li><a href="/posts/2013-12-31-functional-stack/">Functional Stacks</a></li>
+<li><a href="/posts/2014-01-20-functional-set/">Functional Sets</a></li>
+</ul>
+<p>In this part we will implement a basic Priority Queue in Scala. It will support the following operations efficiently:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="k">val</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span> <span class="o">{</span>
+  <span class="c1">// Add an item
+</span><span class="c1"></span>  <span class="k">def</span> <span class="o">+</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span> <span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+  <span class="c1">// Find min item
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">findMin</span><span class="k">:</span> <span class="kt">A</span>
+  <span class="c1">// New Priority queue with min item deleted
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">deleteMin</span><span class="o">(</span><span class="o">)</span><span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+  <span class="c1">// Merges two PriorityQueue together
+</span><span class="c1"></span>  <span class="k">def</span> <span class="n">meld</span><span class="o">(</span><span class="n">that</span><span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="basics"><a href="#basics" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Basics</h2>
+<p>There are <a href="http://en.wikipedia.org/wiki/Priority_queue#Usual_implementation">different</a> ways to implement a Priority Queue. We will use <a href="http://en.wikipedia.org/wiki/Binomial_heap">Binomial Heap</a>. As usual we follow the approach from Okasaki. See <a href="http://citeseerx.ist.psu.edu/viewdoc/summary?doi=10.1.1.48.973">this paper</a> for details about implementing efficient and purely functional priority queues. We start with the basic implementation which is simple to understand. If you know how Binomial heaps work, skip to the <a href="#implementation">next</a> section. Else read on.</p>
+<p>A Binomial heap is a forest of Binomial trees. A binomial tree of rank 0 has just a single node and of rank k (k &gt; 0) has binomial trees of rank (0, 1, .. k-1) as its children. So it looks like (image from wikipedia):</p>
+<img src="http://upload.wikimedia.org/wikipedia/commons/c/cf/Binomial_Trees.svg" style="width: 60%; height: 60%"/>
+<p>Another way to think about binomial tree is: to get binomial tree of rank k, take binomial tree of rank k-1 and insert another tree of rank k-1 as a child to the first tree's root.</p>
+<img src="/images/bt.svg" style="width: 60%; height: 60%"/>
+<p>In any case, a Binomial heap of n elements would contain only trees of the above form and it will correspond to (k<sub>1</sub>, k<sub>2</sub>, ..k<sub>j</sub>) where k<sub>1</sub>k<sub>2</sub>..k<sub>j</sub> is the binary representation of n. So a heap of 5 (101) elements would have trees of rank 0 and 2. This means merging two binomial heap is similar to adding two binary numbers etc.</p>
+<p>Ok, but how can we use a Binomial heap as a Priority Queue? Let's walk through an example and add the following items: (3, 5, 1, 2, 13, 15, 11, 12) in this order and see what we get:</p>
+<p><img src="/images/bh3.svg" alt="drawing"></p>
+<p>So you get the picture. Now to find the min element, we just need to walk through the roots of trees (<code>log(n)</code> items) and return the min. Adding an element is similar to adding 1 to a binary number and deletion is similar. Merging (aka melding) is like adding two binary numbers. In all operations all we need to make sure is that the root is properly selected (since that should always have the minimum).</p>
+<p><a name="implementation"></a></p>
+<h2 id="implementation"><a href="#implementation" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Implementation</h2>
+<p>Now that the idea is clear, let's start writing some code. We have a concrete class <code>BinomialQueue</code> to represent the queue and a <code>Node</code> class to represent individual trees. Let's look at the <code>Node</code> class first:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span><span class="lnt">9
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">case</span> <span class="k">class</span> <span class="nc">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="n">data</span><span class="k">:</span> <span class="kt">A</span><span class="o">,</span> <span class="n">rank</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="mi">0</span><span class="o">,</span> <span class="n">children</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="nc">Nil</span><span class="o">)</span>
+                          <span class="o">(</span><span class="k">implicit</span> <span class="k">val</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span> <span class="k">extends</span> <span class="nc">Ordered</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="o">{</span>
+
+  <span class="k">def</span> <span class="n">link</span><span class="o">(</span><span class="n">other</span><span class="k">:</span> <span class="kt">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span> <span class="k">=</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">ord</span><span class="o">.</span><span class="n">compare</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="o">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="o">)</span> <span class="nc">Node</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">rank</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="n">other</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">children</span><span class="o">)</span>
+    <span class="k">else</span> <span class="nc">Node</span><span class="o">(</span><span class="n">other</span><span class="o">.</span><span class="n">data</span><span class="o">,</span> <span class="n">other</span><span class="o">.</span><span class="n">rank</span><span class="o">+</span><span class="mi">1</span><span class="o">,</span> <span class="k">this</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">other</span><span class="kt">.</span><span class="kt">children</span><span class="o">)</span>
+
+  <span class="k">override</span> <span class="k">def</span> <span class="n">compare</span><span class="o">(</span><span class="n">that</span><span class="k">:</span> <span class="kt">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span><span class="k">:</span> <span class="kt">Int</span> <span class="o">=</span> <span class="n">ord</span><span class="o">.</span><span class="n">compare</span><span class="o">(</span><span class="n">data</span><span class="o">,</span> <span class="n">that</span><span class="o">.</span><span class="n">data</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>For simplicity, every <code>Node</code> stores its rank and have data and list of children. It is ordered based on the data (which needs to have an implicit <code>Ordering</code>). Other than this we have a <code>link</code> method which links two <code>Node</code> together keeping the min element as new root. For example, in the above figure, when we insert <code>2</code>, we link <code>[1,2]</code> and <code>[3,5]</code> together and <code>1</code> gets to be the root.</p>
+<p>Now we can define the <code>BinomialQueue</code> class:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">private</span> <span class="k">final</span> <span class="k">case</span> <span class="k">class</span> <span class="nc">BinomialQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">(</span><span class="n">nodes</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span><span class="o">)</span>
+                        <span class="o">(</span><span class="k">implicit</span> <span class="k">override</span> <span class="k">val</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span>
+                        <span class="k">extends</span> <span class="nc">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="o">{</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><h2 id="operations"><a href="#operations" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Operations</h2>
+<h4 id="insert"><a href="#insert" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Insert</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span><span class="lnt">8
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="o">+</span><span class="o">(</span><span class="n">x</span><span class="k">:</span> <span class="kt">A</span><span class="o">)</span> <span class="k">:</span> <span class="kt">BinomialQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="nc">BinomialQueue</span><span class="o">(</span><span class="n">insertNode</span><span class="o">(</span><span class="nc">Node</span><span class="o">(</span><span class="n">x</span><span class="o">)</span><span class="o">,</span> <span class="n">nodes</span><span class="o">)</span><span class="o">)</span>
+
+<span class="k">private</span> <span class="k">def</span> <span class="n">insertNode</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">n</span><span class="k">:</span> <span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">,</span> <span class="n">lst</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="n">lst</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="nc">Nil</span> <span class="k">=&gt;</span> <span class="nc">List</span><span class="o">(</span><span class="n">n</span><span class="o">)</span>
+  <span class="k">case</span> <span class="n">x</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">xs</span> <span class="o">=&gt;</span>
+    <span class="k">if</span> <span class="o">(</span><span class="n">n</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="n">x</span><span class="o">.</span><span class="n">rank</span><span class="o">)</span> <span class="n">n</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">x</span> <span class="kt">::</span> <span class="kt">xs</span>
+    <span class="k">else</span> <span class="n">insertNode</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">link</span><span class="o">(</span><span class="n">n</span><span class="o">)</span><span class="o">,</span> <span class="n">xs</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>We have 3 case to handle. Inserting to:</p>
+<ul>
+<li>Empty heap : Create a new List having a rank-0 Node (Eg. inserting 3 above)</li>
+<li>Heap without a rank-0 node: Just add a rank-0 Node to our list (Eg. inserting 1, 13 etc above)</li>
+<li>Heap with a rank-0 Node: Now we need to merge and recursively insert merged Node (Eg. inserting 5, 2 etc)</li>
+</ul>
+<h4 id="find-minimum"><a href="#find-minimum" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Find Minimum</h4>
+<p>Just returns the <code>Node</code> with min element.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">findMin</span><span class="k">:</span> <span class="kt">A</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">min</span><span class="o">.</span><span class="n">data</span>
+</code></pre></td></tr></table>
+</div>
+</div><h4 id="merge"><a href="#merge" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Merge</h4>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">meld</span><span class="o">(</span><span class="n">that</span><span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span>
+  <span class="nc">BinomialQueue</span><span class="o">(</span><span class="n">meldLists</span><span class="o">(</span><span class="k">this</span><span class="o">.</span><span class="n">nodes</span><span class="o">,</span> <span class="n">that</span><span class="o">.</span><span class="n">nodes</span><span class="o">)</span><span class="o">)</span>
+
+<span class="k">private</span> <span class="k">def</span> <span class="n">meldLists</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">(</span><span class="n">q1</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span><span class="o">,</span> <span class="n">q2</span><span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span><span class="o">)</span> <span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">Node</span><span class="o">[</span><span class="kt">T</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="o">(</span><span class="n">q1</span><span class="o">,</span> <span class="n">q2</span><span class="o">)</span> <span class="k">match</span> <span class="o">{</span>
+  <span class="k">case</span> <span class="o">(</span><span class="nc">Nil</span><span class="o">,</span> <span class="n">q</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">q</span>
+  <span class="k">case</span> <span class="o">(</span><span class="n">q</span><span class="o">,</span> <span class="nc">Nil</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">q</span>
+  <span class="k">case</span> <span class="o">(</span><span class="n">x</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">xs</span><span class="o">,</span> <span class="n">y</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">ys</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="k">if</span> <span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">rank</span> <span class="o">&lt;</span> <span class="n">y</span><span class="o">.</span><span class="n">rank</span><span class="o">)</span> <span class="n">x</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">meldLists</span><span class="o">(</span><span class="kt">xs</span><span class="o">,</span> <span class="kt">y</span> <span class="kt">::</span> <span class="kt">ys</span><span class="o">)</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">rank</span> <span class="o">&gt;</span> <span class="n">y</span><span class="o">.</span><span class="n">rank</span><span class="o">)</span> <span class="n">y</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">meldLists</span><span class="o">(</span><span class="kt">x</span> <span class="kt">::</span> <span class="kt">xs</span><span class="o">,</span> <span class="kt">ys</span><span class="o">)</span>
+  <span class="k">else</span> <span class="n">insertNode</span><span class="o">(</span><span class="n">x</span><span class="o">.</span><span class="n">link</span><span class="o">(</span><span class="n">y</span><span class="o">)</span><span class="o">,</span> <span class="n">meldLists</span><span class="o">(</span><span class="n">xs</span><span class="o">,</span> <span class="n">ys</span><span class="o">)</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Logic is similar to insert: If a particular ranked node does not exist on one list we can just copy it to output. Same ranked Nodes are merged via linking them together.</p>
+<h3 id="delete-minimum"><a href="#delete-minimum" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Delete Minimum</h3>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">def</span> <span class="n">deleteMin</span><span class="o">(</span><span class="o">)</span><span class="k">:</span> <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="o">{</span>
+  <span class="k">val</span> <span class="n">minNode</span> <span class="k">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">min</span>
+  <span class="nc">BinomialQueue</span><span class="o">(</span><span class="n">meldLists</span><span class="o">(</span><span class="n">nodes</span><span class="o">.</span><span class="n">filter</span><span class="o">(</span><span class="k">_</span> <span class="o">!=</span> <span class="n">minNode</span><span class="o">)</span><span class="o">,</span> <span class="n">minNode</span><span class="o">.</span><span class="n">children</span><span class="o">.</span><span class="n">reverse</span><span class="o">)</span><span class="o">)</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Finds the min Node and removes it. The children of a Binary tree conveniently forms a Binary heap in reversed order, so we just merge that to other Nodes.</p>
+<h2 id="adapting-to-scala-collections"><a href="#adapting-to-scala-collections" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Adapting to Scala Collections</h2>
+<p>We are done and have a working Priority Queue implementation (we could make some operations more efficient by using Skew binary heaps, but thats for a later time). However, the other common operations on collections like iterating, map, filter etc are missing. Scala has a rich collections library and it is not difficult to reuse most of it for a new collection object. See this <a href="http://docs.scala-lang.org/overviews/core/architecture-of-scala-collections.html">excellent</a> guide to understand the design of Scala collections and how to adapt your collection to use it.</p>
+<p>In a nutshell we need to do two things: Provide a way to iterate over the items (<code>Traversable</code> or <code>Iterable</code>) and a way to build a new collection (<code>Builder</code>). There are also higher level of abstractions that make things easier. So we change the <code>PriorityQueue</code> definition as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">abstract</span> <span class="k">class</span> <span class="nc">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="k">val</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span>
+  <span class="k">extends</span> <span class="nc">Iterable</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+  <span class="k">with</span> <span class="nc">GenericOrderedTraversableTemplate</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">PriorityQueue</span><span class="o">]</span>
+  <span class="k">with</span> <span class="nc">IterableLike</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="o">{</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>That's quite a mouthfull, so let's take it one by one. <a href="http://docs.scala-lang.org/overviews/collections/trait-iterable.html">Iterable</a> just defines an <code>iterator</code> method which yields elements of the collection in some order and an <code>isEmpty</code> method. We can implement it as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">isEmpty</span><span class="k">:</span> <span class="kt">Boolean</span> <span class="o">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">isEmpty</span>
+
+<span class="c1">//Inside BinomialHeap
+</span><span class="c1"></span><span class="k">override</span> <span class="k">def</span> <span class="n">iterator</span><span class="k">:</span> <span class="kt">Iterator</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="n">nodes</span><span class="o">.</span><span class="n">flatMap</span><span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">toList</span><span class="o">)</span><span class="o">.</span><span class="n">iterator</span>
+
+<span class="c1">//Inside Node:
+</span><span class="c1"></span><span class="k">def</span> <span class="n">toList</span> <span class="k">:</span> <span class="kt">List</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="k">=</span> <span class="n">data</span> <span class="k">:</span><span class="kt">:</span> <span class="kt">children</span><span class="kt">.</span><span class="kt">flatMap</span><span class="o">(</span><span class="k">_</span><span class="kt">.</span><span class="kt">toList</span><span class="o">)</span>
+</code></pre></td></tr></table>
+</div>
+</div><p><code>IterableLike</code> is for ensuring the same-result-type principle. <a href="http://www.scala-lang.org/api/2.10.3/index.html#scala.collection.generic.GenericOrderedTraversableTemplate">GenericOrderedTraversableTemplate</a> is an easy way to define the builder using a companion object for ordered collections. It has following methods to be implemented:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">override</span> <span class="k">def</span> <span class="n">orderedCompanion</span><span class="k">:</span> <span class="kt">GenericOrderedCompanion</span><span class="o">[</span><span class="kt">PriorityQueue</span><span class="o">]</span> <span class="k">=</span> <span class="nc">PriorityQueue</span>
+<span class="k">override</span> <span class="k">protected</span><span class="o">[</span><span class="kt">this</span><span class="o">]</span> <span class="k">def</span> <span class="n">newBuilder</span><span class="k">:</span> <span class="kt">mutable.Builder</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span>
+                                                             <span class="nc">PriorityQueue</span><span class="o">.</span><span class="n">newBuilder</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Basically we just need to tell which is the companion object where the builder is specified. Finally we need to define the companion object which defines how to build a <code>BinomialQueue</code> from other collections:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">object</span> <span class="nc">PriorityQueue</span> <span class="k">extends</span> <span class="nc">OrderedTraversableFactory</span><span class="o">[</span><span class="kt">PriorityQueue</span><span class="o">]</span> <span class="o">{</span>
+  <span class="k">override</span> <span class="k">def</span> <span class="n">newBuilder</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span><span class="k">:</span>
+                                 <span class="kt">mutable.Builder</span><span class="o">[</span><span class="kt">A</span>, <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span>
+    <span class="k">new</span> <span class="nc">ArrayBuffer</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span> <span class="n">mapResult</span> <span class="o">{</span> <span class="n">xs</span> <span class="k">=&gt;</span>
+      <span class="n">xs</span><span class="o">.</span><span class="n">foldLeft</span><span class="o">(</span><span class="nc">BinomialQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="nc">Nil</span><span class="o">)</span><span class="o">)</span><span class="o">(</span><span class="o">(</span><span class="n">t</span><span class="o">,</span> <span class="n">x</span><span class="o">)</span> <span class="k">=&gt;</span> <span class="n">t</span> <span class="o">+</span> <span class="n">x</span><span class="o">)</span>
+    <span class="o">}</span>
+
+  <span class="k">implicit</span> <span class="k">def</span> <span class="n">canBuildFrom</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">(</span><span class="k">implicit</span> <span class="n">ord</span><span class="k">:</span> <span class="kt">Ordering</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">)</span><span class="k">:</span>
+   <span class="kt">CanBuildFrom</span><span class="o">[</span><span class="kt">Coll</span>, <span class="kt">A</span>, <span class="kt">PriorityQueue</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span><span class="o">]</span> <span class="k">=</span> <span class="k">new</span> <span class="nc">GenericCanBuildFrom</span><span class="o">[</span><span class="kt">A</span><span class="o">]</span>
+<span class="o">}</span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Now we can use all the power of Scala collections.</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-scala" data-lang="scala"><span class="k">val</span> <span class="n">pq</span> <span class="k">=</span> <span class="nc">PriorityQueue</span><span class="o">(</span><span class="mi">1</span><span class="o">,</span><span class="mi">2</span><span class="o">,</span><span class="mi">3</span><span class="o">,</span><span class="mi">4</span><span class="o">,</span><span class="mi">5</span><span class="o">,</span><span class="mi">6</span><span class="o">)</span>        <span class="c1">// BinomialQueue(5, 6, 1, 3, 4, 2)
+</span><span class="c1"></span><span class="n">pq</span> <span class="n">map</span> <span class="o">(</span><span class="k">_</span> <span class="o">*</span> <span class="mi">2</span><span class="o">)</span> <span class="n">filter</span> <span class="o">(</span><span class="k">_</span> <span class="o">&lt;</span> <span class="mi">6</span><span class="o">)</span>              <span class="c1">// BinomialQueue(2, 4)
+</span><span class="c1"></span><span class="k">val</span> <span class="n">sq</span> <span class="k">=</span> <span class="nc">PriorityQueue</span><span class="o">(</span><span class="s">&#34;a&#34;</span><span class="o">,</span> <span class="s">&#34;aa&#34;</span><span class="o">,</span> <span class="s">&#34;aaaaa&#34;</span><span class="o">)</span> <span class="c1">// BinomialQueue(aaaaa, a, aa)
+</span><span class="c1"></span><span class="n">sq</span> <span class="n">map</span> <span class="o">(</span><span class="k">_</span><span class="o">.</span><span class="n">length</span><span class="o">)</span> <span class="n">reduce</span> <span class="o">(</span><span class="k">_</span><span class="o">*</span><span class="k">_</span><span class="o">)</span>             <span class="c1">// 10
+</span><span class="c1"></span>
+</code></pre></td></tr></table>
+</div>
+</div><p>Isn't that cool?</p>
+<p>You can find the complete code <a href="https://github.com/amitdev/functional-ds/blob/master/src/main/scala/ds/PriorityQueue.scala">here</a>. The Binomial heap images were generated using <a href="https://github.com/amitdev/functional-ds/blob/master/src/main/scala/ds/PriorityQueueUtil.scala">this code</a>.
+That's all for now, see you later!</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-24-augmented-data/" class="related-link">Drawing Trees</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-01-20-functional-set/" class="related-link">A basic, immutable Set in Scala</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2013-12-31-functional-stack/" class="related-link">A basic, immutable Stack in Scala</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/scala/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>scala</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+                <li class="post-nav-prev">
+                    <a href="/posts/2014-06-29-learning-functional-programming/" rel="prev">< Learning Functional Programming - A Roadmap</a>
+                </li>
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/2014-01-24-augmented-data/" rel="next">Drawing Trees ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>
