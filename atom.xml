@@ -4,25 +4,25 @@
 <feed xmlns="http://www.w3.org/2005/Atom" xml:lang="en-US">
     <title type="text">Memetic Musings</title>
     <subtitle type="html">Writings about programming</subtitle>
-    <updated>2020-01-20T15:09:59+11:00</updated>
-    <id>https://example.com/</id>
-    <link rel="alternate" type="text/html" href="https://example.com/" />
-    <link rel="self" type="application/atom+xml" href="https://example.com/atom.xml" />
+    <updated>2020-01-23T10:08:49+11:00</updated>
+    <id>https://amitdev.github.io/</id>
+    <link rel="alternate" type="text/html" href="https://amitdev.github.io/" />
+    <link rel="self" type="application/atom+xml" href="https://amitdev.github.io/atom.xml" />
     <author>
             <name>Amit Dev</name>
-            <uri>https://example.com/</uri>
+            <uri>https://amitdev.github.io/</uri>
             </author>
     <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights>
     <generator uri="https://gohugo.io/" version="0.62.2">Hugo</generator>
         <entry>
             <title type="text">Functional programming in Rust</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2019-03-26-functional-rust/" />
-            <id>https://example.com/posts/2019-03-26-functional-rust/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2019-03-26-functional-rust/" />
+            <id>https://amitdev.github.io/posts/2019-03-26-functional-rust/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2019-03-26T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[Rust is a modern, multi paradigm language with the following primary goals:
 Performance (zero cost abstractions) Reliability (no data races)  Rust is strongly influenced by functional programming languages like ML, so it is possible to follow a functional coding style in it.]]></summary>
@@ -398,7 +398,7 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -408,13 +408,13 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/rust/" term="rust" label="rust" />
+                                <category scheme="https://amitdev.github.io/tags/rust/" term="rust" label="rust" />
                             
                         
                     
@@ -424,13 +424,13 @@ friendly compiler.</p>
     
         <entry>
             <title type="text">A functional design pattern</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2014-07-28-a-functional-design-pattern/" />
-            <id>https://example.com/posts/2014-07-28-a-functional-design-pattern/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2014-07-28-a-functional-design-pattern/" />
+            <id>https://amitdev.github.io/posts/2014-07-28-a-functional-design-pattern/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2014-07-28T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[This is not an attempt to be yet another Monad tutorial. There are probably more Monad tutorials than one can read already out there - see this timeline or do a google search. This rather is a simple introduction to understand Monads based on the Essence of FP paper.]]></summary>
             
@@ -711,7 +711,7 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -721,13 +721,13 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/python/" term="python" label="python" />
+                                <category scheme="https://amitdev.github.io/tags/python/" term="python" label="python" />
                             
                         
                     
@@ -737,13 +737,13 @@ friendly compiler.</p>
     
         <entry>
             <title type="text">Learning Functional Programming - A Roadmap</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2014-06-29-learning-functional-programming/" />
-            <id>https://example.com/posts/2014-06-29-learning-functional-programming/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2014-06-29-learning-functional-programming/" />
+            <id>https://amitdev.github.io/posts/2014-06-29-learning-functional-programming/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2014-06-29T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[This is a learning roadmap for Functional Programming (FP). There are quite a lot of resources to learn FP on the web (just like on any subject). So the challenge is not to find a resource to learn, but to find quality resources.]]></summary>
             
@@ -794,7 +794,7 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/categories/learning/" term="Learning" label="Learning" />
+                                <category scheme="https://amitdev.github.io/categories/learning/" term="Learning" label="Learning" />
                             
                         
                     
@@ -804,7 +804,7 @@ friendly compiler.</p>
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                     
@@ -814,13 +814,13 @@ friendly compiler.</p>
     
         <entry>
             <title type="text">Purely functional Priority Queue</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2014-03-06-priority-queue/" />
-            <id>https://example.com/posts/2014-03-06-priority-queue/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2014-03-06-priority-queue/" />
+            <id>https://amitdev.github.io/posts/2014-03-06-priority-queue/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2014-03-06T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[This is part of a series of articles on implementing various functional data structures in Scala. See other articles in this series:
 Functional Stacks Functional Sets  In this part we will implement a basic Priority Queue in Scala. It will support the following operations efficiently:]]></summary>
@@ -1104,7 +1104,7 @@ That's all for now, see you later!</p>
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -1114,13 +1114,13 @@ That's all for now, see you later!</p>
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/scala/" term="scala" label="scala" />
+                                <category scheme="https://amitdev.github.io/tags/scala/" term="scala" label="scala" />
                             
                         
                     
@@ -1130,13 +1130,13 @@ That's all for now, see you later!</p>
     
         <entry>
             <title type="text">Drawing Trees</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2014-01-24-augmented-data/" />
-            <id>https://example.com/posts/2014-01-24-augmented-data/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2014-01-24-augmented-data/" />
+            <id>https://amitdev.github.io/posts/2014-01-24-augmented-data/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2014-01-24T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[In the last article we saw one way of implementing Binary Search Trees and Red Black Trees. This data structure can be used to implement a Set (like we saw before), but there are many other use cases if we can augment the data stored on the nodes.]]></summary>
             
@@ -1304,7 +1304,7 @@ That's all for now, see you later!</p>
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -1314,13 +1314,13 @@ That's all for now, see you later!</p>
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/scala/" term="scala" label="scala" />
+                                <category scheme="https://amitdev.github.io/tags/scala/" term="scala" label="scala" />
                             
                         
                     
@@ -1330,13 +1330,13 @@ That's all for now, see you later!</p>
     
         <entry>
             <title type="text">A basic, immutable Set in Scala</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2014-01-20-functional-set/" />
-            <id>https://example.com/posts/2014-01-20-functional-set/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2014-01-20-functional-set/" />
+            <id>https://amitdev.github.io/posts/2014-01-20-functional-set/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2014-01-20T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[In the last article we saw one way of implementing an object-functional, immutable Stack data structure. Now let's see how to implement a Set data structure. A Set is a container which supports the following operations efficiently:
 insert: adds a new item to the Set delete: removes given item from the Set member: check if a given item is in the Set  As we did before with the Stack, we can define this behavior in a Trait like the following:]]></summary>
@@ -1703,7 +1703,7 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -1713,13 +1713,13 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/scala/" term="scala" label="scala" />
+                                <category scheme="https://amitdev.github.io/tags/scala/" term="scala" label="scala" />
                             
                         
                     
@@ -1729,13 +1729,13 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
     
         <entry>
             <title type="text">A basic, immutable Stack in Scala</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/2013-12-31-functional-stack/" />
-            <id>https://example.com/posts/2013-12-31-functional-stack/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/2013-12-31-functional-stack/" />
+            <id>https://amitdev.github.io/posts/2013-12-31-functional-stack/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2013-12-31T00:00:00+00:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[Scala was one language that I played around with many years back (and blogged about then). Recently, I took the excellent course on reactive programming which rekindled my interest in Scala and I decided to brush up my knowledge on it as well as functional programming.]]></summary>
             
@@ -2044,7 +2044,7 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
                             
                             
                             
-                                <category scheme="https://example.com/categories/programming/" term="Programming" label="Programming" />
+                                <category scheme="https://amitdev.github.io/categories/programming/" term="Programming" label="Programming" />
                             
                         
                     
@@ -2054,13 +2054,13 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
                             
                             
                             
-                                <category scheme="https://example.com/tags/functional-programming/" term="functional programming" label="functional programming" />
+                                <category scheme="https://amitdev.github.io/tags/functional-programming/" term="functional programming" label="functional programming" />
                             
                         
                             
                             
                             
-                                <category scheme="https://example.com/tags/scala/" term="scala" label="scala" />
+                                <category scheme="https://amitdev.github.io/tags/scala/" term="scala" label="scala" />
                             
                         
                     
@@ -2070,13 +2070,13 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
     
         <entry>
             <title type="text">Moving in from Blogger</title>
-            <link rel="alternate" type="text/html" href="https://example.com/posts/first-post/" />
-            <id>https://example.com/posts/first-post/</id>
+            <link rel="alternate" type="text/html" href="https://amitdev.github.io/posts/first-post/" />
+            <id>https://amitdev.github.io/posts/first-post/</id>
             <updated>2020-01-20T12:57:26+11:00</updated>
             <published>2013-12-15T11:34:15+11:00</published>
             <author>
                     <name>Amit Dev</name>
-                    <uri>https://example.com/</uri>
+                    <uri>https://amitdev.github.io/</uri>
                     </author>
             <rights>[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)</rights><summary type="html"><![CDATA[Some of my older posts are in blogger.]]></summary>
             
@@ -2093,7 +2093,7 @@ insert: adds a new item to the Set delete: removes given item from the Set membe
                             
                             
                             
-                                <category scheme="https://example.com/categories/general/" term="General" label="General" />
+                                <category scheme="https://amitdev.github.io/categories/general/" term="General" label="General" />
                             
                         
                     
