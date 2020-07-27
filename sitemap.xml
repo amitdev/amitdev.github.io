@@ -3,6 +3,51 @@
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   
   <url>
+    <loc>https://amitdev.github.io/categories/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/posts/2020-07-27-countdown-rust/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/tags/functional-programming/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/tags/haskell/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/posts/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/categories/programming/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/tags/rust/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
+    <loc>https://amitdev.github.io/tags/</loc>
+    <lastmod>2020-07-27T18:24:28+10:00</lastmod>
+  </url>
+  
+  <url>
     <loc>https://amitdev.github.io/about/</loc>
     <lastmod>2020-01-20T14:46:52+11:00</lastmod>
   </url>
@@ -13,42 +58,7 @@
   </url>
   
   <url>
-    <loc>https://amitdev.github.io/</loc>
-    <lastmod>2020-01-20T14:55:58+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/categories/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/tags/functional-programming/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
     <loc>https://amitdev.github.io/posts/2019-03-26-functional-rust/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/posts/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/categories/programming/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/tags/rust/</loc>
-    <lastmod>2020-01-20T12:57:26+11:00</lastmod>
-  </url>
-  
-  <url>
-    <loc>https://amitdev.github.io/tags/</loc>
     <lastmod>2020-01-20T12:57:26+11:00</lastmod>
   </url>
   

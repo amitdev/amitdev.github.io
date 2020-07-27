@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="en-US" data-theme="light">
+    <head prefix="og: http://ogp.me/ns# article: http://ogp.me/ns/article#">
+    <meta charset="UTF-8" /><meta name="theme-color" content="#fff" />
+        <script>
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+            }
+            function changeModeMeta() {
+                document.documentElement.setAttribute('data-theme', arguments[0]);
+                if (arguments[0] === "dark") {
+                    changeThemeColor("#1c1c21");
+                } else {
+                    changeThemeColor("#fff");
+                }
+            }
+            function changeThemeColor() {
+                document.querySelector('meta[name="theme-color"]').setAttribute('content', arguments[0]);
+            }
+        </script>
+
+    
+
+    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes" />
+    
+    <meta http-equiv="X-UA-Compatible" content="IE=edge, chrome=1" />
+    
+    <meta name="format-detection" content="telephone=no, date=no, address=no, email=no" />
+    
+    <meta http-equiv="Cache-Control" content="no-transform" />
+    
+    <meta http-equiv="Cache-Control" content="no-siteapp" />
+    
+    <meta name="renderer" content="webkit" />
+
+    <meta name="generator" content="Hugo 0.62.2" />
+
+    <title>Countdown problem in Rust | Memetic Musings</title>
+
+    <link rel="stylesheet" href="/css/meme.min.50d36d5e39f1ff35abf60aac9f4361d38ff9d210be54f79bcc710ff951bfd086.css" integrity="sha256-UNNtXjnx/zWr9gqsn0Nh04/50hC+VPebzHEP+VG/0IY=" data-instant-track />
+
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Serif:400,400i,500,700,700i|Source+Code+Pro:400,400i,700,700i|Comfortaa:700&display=swap" rel="stylesheet" />
+
+    <meta name="author" content="Amit Dev" />
+    <meta name="description" content="The countdown problem was presented in a paper by Graham Hutton with a simple and elegant solution in Haskell. See the paper here. In this post I&#39;ll implement the same solution in Rust and see how it looks compared to the original Haskell solution." />
+    <meta name="keywords" content="programming, functional-programming, rust, haskell" />
+    
+    <link rel="shortcut icon" type="image/ico" href="/favicon.ico" />
+    <link rel="mask-icon" href="/icons/safari-pinned-tab.svg" color="#2a6df4" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Memetic Musings" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Memetic Musings" />
+    <meta name="msapplication-starturl" content="../../" />
+    <meta name="msapplication-TileColor" content="#fff" />
+    <meta name="msapplication-TileImage" content="../../icons/mstile-150x150.png" />
+    <link rel="manifest" href="/manifest.json" />
+
+    
+    
+
+    
+    <link rel="canonical" href="https://amitdev.github.io/posts/2020-07-27-countdown-rust/" />
+
+
+
+
+<script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "BlogPosting",
+        "datePublished": "2020-07-27T00:00:00+00:00",
+        "dateModified": "2020-07-27T18:24:28+10:00",
+        "url": "https://amitdev.github.io/posts/2020-07-27-countdown-rust/",
+        "headline": "Countdown problem in Rust",
+        "description": "The countdown problem was presented in a paper by Graham Hutton with a simple and elegant solution in Haskell. See the paper here. In this post I'll implement the same solution in Rust and see how it looks compared to the original Haskell solution.",
+        "keywords": "programming, functional-programming, rust, haskell",
+        "inLanguage" : "en-US",
+        "articleSection": "posts",
+        "wordCount":  1239 ,
+        "image": "https://amitdev.github.io/icons/apple-touch-icon.png",
+        "author": {
+            "@type": "Person",
+            "description": "Memetic Musings",
+            "url": "https://amitdev.github.io/",
+            "name": "Amit Dev"
+        },
+        "license": "[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en)",
+        "publisher": {
+            "@type": "Organization",
+            "name": "Memetic Musings",
+            "logo": {
+                "@type": "ImageObject",
+                "url": "https://amitdev.github.io/icons/apple-touch-icon.png"
+            },
+            "url": "https://amitdev.github.io/"
+        },
+        "mainEntityOfPage": {
+            "@type": "WebSite",
+            "@id": "https://amitdev.github.io/"
+        }
+    }
+</script>
+
+    
+
+
+
+<meta name="twitter:card" content="summary" />
+
+<meta name="twitter:site" content="@amitdevr" />
+<meta name="twitter:creator" content="@amitdevr" />
+
+    
+
+
+
+
+
+
+<meta property="og:title" content="Countdown problem in Rust" />
+<meta property="og:description" content="The countdown problem was presented in a paper by Graham Hutton with a simple and elegant solution in Haskell. See the paper here. In this post I&#39;ll implement the same solution in Rust and see how it looks compared to the original Haskell solution." />
+<meta property="og:url" content="https://amitdev.github.io/posts/2020-07-27-countdown-rust/" />
+<meta property="og:site_name" content="Memetic Musings" />
+<meta property="og:locale" content="en-US" /><meta property="og:image" content="https://amitdev.github.io/icons/apple-touch-icon.png" />
+    <meta property="og:type" content="article" />
+    <meta property="article:published_time" content="2020-07-27T00:00:00+00:00" />
+    <meta property="article:modified_time" content="2020-07-27T18:24:28+10:00" />
+    
+    <meta property="article:section" content="posts" />
+    <meta property="article:tag" content="programming, functional-programming, rust, haskell" />
+
+        
+
+
+
+
+    
+    <script>
+        window.ga=window.ga||function(){(ga.q=ga.q||[]).push(arguments)};ga.l=+new Date;
+        ga('create', 'UA-46555087-1', 'auto');
+        ga('send', 'pageview');
+    </script>
+    <script async src='https://www.google-analytics.com/analytics.js'></script>
+    
+
+
+    
+</head>
+
+    <body>
+        <div class="container">
+            
+            
+    <nav class="nav">
+        <ul class="menu" id="menu">
+            
+                
+            
+            
+            
+                <li class="menu-item"><a href="/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512" class="icon menu-item-icon"><path d="M280.37 148.26L96 300.11V464a16 16 0 0 0 16 16l112.06-.29a16 16 0 0 0 15.92-16V368a16 16 0 0 1 16-16h64a16 16 0 0 1 16 16v95.64a16 16 0 0 0 16 16.05L464 480a16 16 0 0 0 16-16V300L295.67 148.26a12.19 12.19 0 0 0-15.3 0zM571.6 251.47L488 182.56V44.05a12 12 0 0 0-12-12h-56a12 12 0 0 0-12 12v72.61L318.47 43a48 48 0 0 0-61 0L4.34 251.47a12 12 0 0 0-1.6 16.9l25.5 31A12 12 0 0 0 45.15 301l235.22-193.74a12.19 12.19 0 0 1 15.3 0L530.9 301a12 12 0 0 0 16.9-1.6l25.5-31a12 12 0 0 0-1.7-16.93z"/></svg><span class="menu-item-name">Home</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/talks/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Talks</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/posts/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M32 448c0 17.7 14.3 32 32 32h384c17.7 0 32-14.3 32-32V160H32v288zm160-212c0-6.6 5.4-12 12-12h104c6.6 0 12 5.4 12 12v8c0 6.6-5.4 12-12 12H204c-6.6 0-12-5.4-12-12v-8zM480 32H32C14.3 32 0 46.3 0 64v48c0 8.8 7.2 16 16 16h480c8.8 0 16-7.2 16-16V64c0-17.7-14.3-32-32-32z"/></svg><span class="menu-item-name">Posts</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/categories/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon menu-item-icon"><path d="M149.333 56v80c0 13.255-10.745 24-24 24H24c-13.255 0-24-10.745-24-24V56c0-13.255 10.745-24 24-24h101.333c13.255 0 24 10.745 24 24zm181.334 240v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm32-240v80c0 13.255 10.745 24 24 24H488c13.255 0 24-10.745 24-24V56c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24zm-32 80V56c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.256 0 24.001-10.745 24.001-24zm-205.334 56H24c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24zM0 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H24c-13.255 0-24 10.745-24 24zm386.667-56H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zm0 160H488c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H386.667c-13.255 0-24 10.745-24 24v80c0 13.255 10.745 24 24 24zM181.333 376v80c0 13.255 10.745 24 24 24h101.333c13.255 0 24-10.745 24-24v-80c0-13.255-10.745-24-24-24H205.333c-13.255 0-24 10.745-24 24z"/></svg><span class="menu-item-name">Categories</span></a>
+                </li>
+            
+                <li class="menu-item"><a href="/about/"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512" class="icon menu-item-icon"><path d="M248 8C111 8 0 119 0 256s111 248 248 248 248-111 248-248S385 8 248 8zm0 96c48.6 0 88 39.4 88 88s-39.4 88-88 88-88-39.4-88-88 39.4-88 88-88zm0 344c-58.7 0-111.3-26.6-146.5-68.2 18.8-35.4 55.6-59.8 98.5-59.8 2.4 0 4.8.4 7.1 1.1 13 4.2 26.6 6.9 40.9 6.9 14.3 0 28-2.7 40.9-6.9 2.3-.7 4.7-1.1 7.1-1.1 42.9 0 79.7 24.4 98.5 59.8C359.3 421.4 306.7 448 248 448z"/></svg><span class="menu-item-name">About</span></a>
+                </li>
+            
+        </ul>
+    </nav>
+
+            
+            
+    
+        
+            
+        
+        <div id="theme-toggle" onclick="modeSwitcher()">🌞</div>
+    
+
+            
+    <main class="main single" id="main">
+    <div class="main-inner">
+
+        <article class="content post" data-small-caps="true" data-type="posts">
+
+            <h1 class="post-title">Countdown problem in Rust</h1>
+
+            
+
+            
+                
+            
+
+            
+                
+
+<div class="post-meta">
+    
+        
+        <time datetime="2020-07-27T00:00:00+00:00" class="post-meta-item published"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon post-meta-icon"><path d="M148 288h-40c-6.6 0-12-5.4-12-12v-40c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v40c0 6.6-5.4 12-12 12zm108-12v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 96v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm-96 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm192 0v-40c0-6.6-5.4-12-12-12h-40c-6.6 0-12 5.4-12 12v40c0 6.6 5.4 12 12 12h40c6.6 0 12-5.4 12-12zm96-260v352c0 26.5-21.5 48-48 48H48c-26.5 0-48-21.5-48-48V112c0-26.5 21.5-48 48-48h48V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h128V12c0-6.6 5.4-12 12-12h40c6.6 0 12 5.4 12 12v52h48c26.5 0 48 21.5 48 48zm-48 346V160H48v298c0 3.3 2.7 6 6 6h340c3.3 0 6-2.7 6-6z"/></svg>&nbsp;2020.7.27</time>
+    
+    
+    
+    
+        
+        
+        
+            
+                
+                <span class="post-meta-item category"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M464 128H272l-54.63-54.63c-6-6-14.14-9.37-22.63-9.37H48C21.49 64 0 85.49 0 112v288c0 26.51 21.49 48 48 48h416c26.51 0 48-21.49 48-48V176c0-26.51-21.49-48-48-48zm0 272H48V112h140.12l54.63 54.63c6 6 14.14 9.37 22.63 9.37H464v224z"/></svg>&nbsp;<a href="/categories/programming/" class="category-link">Programming</a></span>
+            
+        
+    
+    
+        
+        <span class="post-meta-item wordcount"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M497.9 142.1l-46.1 46.1c-4.7 4.7-12.3 4.7-17 0l-111-111c-4.7-4.7-4.7-12.3 0-17l46.1-46.1c18.7-18.7 49.1-18.7 67.9 0l60.1 60.1c18.8 18.7 18.8 49.1 0 67.9zM284.2 99.8L21.6 362.4.4 483.9c-2.9 16.4 11.4 30.6 27.8 27.8l121.5-21.3 262.6-262.6c4.7-4.7 4.7-12.3 0-17l-111-111c-4.8-4.7-12.4-4.7-17.1 0zM124.1 339.9c-5.5-5.5-5.5-14.3 0-19.8l154-154c5.5-5.5 14.3-5.5 19.8 0s5.5 14.3 0 19.8l-154 154c-5.5 5.5-14.3 5.5-19.8 0zM88 424h48v36.3l-64.5 11.3-31.1-31.1L51.7 376H88v48z"/></svg>&nbsp;1239</span>
+    
+    
+        
+        <span class="post-meta-item reading-time"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon post-meta-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm0 448c-110.5 0-200-89.5-200-200S145.5 56 256 56s200 89.5 200 200-89.5 200-200 200zm61.8-104.4l-84.9-61.7c-3.1-2.3-4.9-5.9-4.9-9.7V116c0-6.6 5.4-12 12-12h32c6.6 0 12 5.4 12 12v141.7l66.8 48.6c5.4 3.9 6.5 11.4 2.6 16.8L334.6 349c-3.9 5.3-11.4 6.5-16.8 2.6z"/></svg>&nbsp;6&nbsp;mins</span>
+    
+    
+</div>
+            
+
+            <div class="post-body"><p style="text-indent:0"><span class="drop-cap">T</span>he countdown problem was presented in a paper by Graham Hutton with a simple
+and elegant solution in Haskell. See the paper <a href="http://www.cs.nott.ac.uk/~pszgmh/countdown.pdf">here</a>.
+In this post I'll implement the same solution in Rust and see how it looks compared to
+the original Haskell solution.</p>
+<h2 id="what-is-the-problem"><a href="#what-is-the-problem" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>What is the problem</h2>
+<p>From the paper:</p>
+<blockquote>
+<p>Countdown is a popular quiz programme on British television that includes a
+numbers game that we shall refer to as the countdown problem. The essence of
+the problem is as follows: given a sequence of source numbers and a single target
+number, attempt to construct an arithmetic expression using each of the source
+numbers at most once, and such that the result of evaluating the expression is the
+target number. The given numbers are restricted to being non-zero naturals, as are
+the intermediate results during evaluation of the expression.</p>
+</blockquote>
+<p>For eg. Given the numbers <code>[1, 3, 7, 10, 25, 50]</code> and target <code>765</code>, one solution would
+be <code>(1 + 50) ∗ (25 − 10)</code>.</p>
+<h2 id="implementation"><a href="#implementation" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Implementation</h2>
+<p>In the paper, an initial solution is presented which is then optimized. In this post
+we will directly implement the final solution.</p>
+<p>First we need a way to represent the supported operations. A sum type is ideal for this
+and in Rust we can use <code>enum</code> for it:</p>
+<table >
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">Op</span>
+  <span class="ow">=</span> <span class="kt">Add</span> 
+  <span class="o">|</span> <span class="kt">Sub</span> 
+  <span class="o">|</span> <span class="kt">Mul</span> 
+  <span class="o">|</span> <span class="kt">Div</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="cp">#[</span><span class="cp">derive(Copy, Clone)</span><span class="cp">]</span><span class="w">
+</span><span class="w"></span><span class="k">enum</span> <span class="nc">Op</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">Add</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">Sub</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">Mul</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">Div</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>The definitions looks very similar in both languages, though syntax is different. In Rust we also need to derive traits which
+allows us to freely <a href="https://doc.rust-lang.org/std/marker/trait.Copy.html">copy</a> values of the type in the later program.</p>
+<p>Next, we need to define an expression - which is either a number, or two sub-expressions
+combined with an operator.</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="kr">data</span> <span class="kt">Expr</span>
+  <span class="ow">=</span> <span class="kt">Val</span> <span class="kt">Int</span>
+  <span class="o">|</span> <span class="kt">App</span> <span class="kt">Op</span> <span class="kt">Expr</span> <span class="kt">Expr</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">type</span> <span class="nc">Int</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="kt">i64</span><span class="p">;</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="cp">#[</span><span class="cp">derive(Clone)</span><span class="cp">]</span><span class="w">
+</span><span class="w"></span><span class="k">enum</span> <span class="nc">Expr</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">Val</span><span class="p">(</span><span class="n">Int</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">App</span><span class="p">(</span><span class="n">Op</span><span class="p">,</span><span class="w"> </span><span class="n">Rc</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">Rc</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>First I added a type alias for <code>Int</code> to keep the code similar to Haskell. We start to see differences - in Rust we cannot define nested
+references directly. We could use smart pointer like <a href="https://doc.rust-lang.org/std/boxed/struct.Box.html">Box</a> or
+<a href="https://doc.rust-lang.org/std/rc/struct.Rc.html">Rc</a>.
+In our case we go with <code>Rc</code> since there will be shared sub expressions and reference counted object
+performs better in that case.</p>
+<p>Next, the paper defines some utility functions: to check if an expr is valid and also to apply
+an expression and get its result:</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">valid</span> <span class="ow">::</span> <span class="kt">Op</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">valid</span> <span class="kt">Add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span>
+<span class="nf">valid</span> <span class="kt">Sub</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">y</span>
+<span class="nf">valid</span> <span class="kt">Mul</span> <span class="n">x</span> <span class="n">y</span> 
+  <span class="ow">=</span> <span class="n">x</span> <span class="o">/=</span> <span class="mi">1</span> 
+  <span class="o">&amp;&amp;</span> <span class="n">y</span> <span class="o">/=</span> <span class="mi">1</span> 
+  <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">y</span>
+<span class="nf">valid</span> <span class="kt">Div</span> <span class="n">x</span> <span class="n">y</span> 
+  <span class="ow">=</span> <span class="n">y</span> <span class="o">/=</span> <span class="mi">1</span> 
+  <span class="o">&amp;&amp;</span> <span class="n">x</span> <span class="p">`</span><span class="n">mod</span><span class="p">`</span> <span class="n">y</span> <span class="o">==</span> <span class="mi">0</span>
+
+<span class="nf">apply</span> <span class="ow">::</span> <span class="kt">Op</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="kt">Int</span>
+<span class="nf">apply</span> <span class="kt">Add</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">+</span> <span class="n">y</span>
+<span class="nf">apply</span> <span class="kt">Sub</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">y</span>
+<span class="nf">apply</span> <span class="kt">Mul</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">y</span>
+<span class="nf">apply</span> <span class="kt">Div</span> <span class="n">x</span> <span class="n">y</span> <span class="ow">=</span> <span class="n">x</span> <span class="p">`</span><span class="n">div</span><span class="p">`</span> <span class="n">y</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">valid</span><span class="p">(</span><span class="n">op</span>: <span class="kp">&amp;</span><span class="nc">Op</span><span class="p">,</span><span class="w"> </span><span class="n">x</span>: <span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="n">y</span>: <span class="nc">Int</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="kt">bool</span> <span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">match</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Add</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Sub</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Mul</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">!</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;</span><span class="o">&amp;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">!</span><span class="o">=</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;</span><span class="o">&amp;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">&lt;</span><span class="o">=</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Div</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">y</span><span class="w"> </span><span class="o">&gt;</span><span class="w"> </span><span class="mi">1</span><span class="w"> </span><span class="o">&amp;</span><span class="o">&amp;</span><span class="w"> </span><span class="p">(</span><span class="p">(</span><span class="n">x</span><span class="w"> </span><span class="o">%</span><span class="w"> </span><span class="n">y</span><span class="p">)</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="mi">0</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">apply</span><span class="p">(</span><span class="n">op</span>: <span class="kp">&amp;</span><span class="nc">Op</span><span class="p">,</span><span class="w"> </span><span class="n">x</span>: <span class="nc">Int</span><span class="p">,</span><span class="w"> </span><span class="n">y</span>: <span class="nc">Int</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nc">Int</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">match</span><span class="w"> </span><span class="n">op</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Add</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Sub</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">-</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Mul</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">*</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">Div</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">x</span><span class="w"> </span><span class="o">/</span><span class="w"> </span><span class="n">y</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>Apart from syntax, no major change. We can do pattern matching in Rust similar to
+Haskell. However, we always need to think about lifetime of variables - here I chose to
+work with reference of <code>Op</code> instead of <code>Op</code> directly. It will be clear why that is better
+as we look at other functions that calls this.</p>
+<p>Now we get into the core logic of implementation. We need a way to split a list at all possible
+points. For eg. <code>[1, 2, 3]</code> to <code>([1], [2, 3]) and ([1, 2], [3])</code>.</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">split</span>        <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="p">(</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="p">)</span><span class="p">]</span>
+<span class="nf">split</span> <span class="kt">[]</span>     <span class="ow">=</span> <span class="p">[</span><span class="p">(</span><span class="kt">[]</span><span class="p">,</span> <span class="kt">[]</span><span class="p">)</span><span class="p">]</span>
+<span class="nf">split</span> <span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="ow">=</span> <span class="p">(</span><span class="kt">[]</span><span class="p">,</span> <span class="n">x</span><span class="kt">:</span><span class="n">xs</span><span class="p">)</span> <span class="kt">:</span> <span class="p">[</span><span class="p">(</span><span class="n">x</span><span class="kt">:</span><span class="n">ls</span><span class="p">,</span> <span class="n">rs</span><span class="p">)</span>
+               <span class="o">|</span> <span class="p">(</span><span class="n">ls</span><span class="p">,</span><span class="n">rs</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">split</span> <span class="n">xs</span><span class="p">]</span>
+
+<span class="nf">ne</span>         <span class="ow">::</span> <span class="p">(</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="p">,</span> <span class="p">[</span><span class="n">b</span><span class="p">]</span><span class="p">)</span> <span class="ow">-&gt;</span> <span class="kt">Bool</span>
+<span class="nf">ne</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="n">ys</span><span class="p">)</span> <span class="ow">=</span> <span class="n">not</span> <span class="p">(</span><span class="n">null</span> <span class="n">xs</span> <span class="o">||</span> <span class="n">null</span> <span class="n">ys</span><span class="p">)</span>
+
+<span class="nf">nesplit</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="p">(</span><span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="p">,</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span><span class="p">)</span><span class="p">]</span>
+<span class="nf">nesplit</span> <span class="ow">=</span> <span class="n">filter</span> <span class="n">ne</span> <span class="o">.</span> <span class="n">split</span>
+
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">split</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ns</span>: <span class="kp">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">  </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">(</span><span class="mi">1</span><span class="p">.</span><span class="p">.</span><span class="n">ns</span><span class="p">.</span><span class="n">len</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">i</span><span class="o">|</span><span class="w"> </span><span class="n">ns</span><span class="p">.</span><span class="n">split_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">collect</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>The main difference in the Rust version is the absense of list comprehensions - that
+syntactic sugar is not available, but it possible to achieve something similar using macros.</p>
+<p>For eg, using the <a href="https://crates.io/crates/cute">cute</a> crate, we can rewrite the <code>split</code> function as follows:</p>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">split</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">(</span><span class="n">ns</span>: <span class="kp">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="p">(</span><span class="o">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="p">[</span><span class="n">T</span><span class="p">]</span><span class="p">)</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">c</span><span class="o">!</span><span class="p">[</span><span class="n">ns</span><span class="p">.</span><span class="n">split_at</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="p">,</span><span class="w"> </span><span class="k">for</span><span class="w"> </span><span class="n">i</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="mi">1</span><span class="p">.</span><span class="p">.</span><span class="n">ns</span><span class="p">.</span><span class="n">len</span><span class="p">(</span><span class="p">)</span><span class="p">]</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div><p>While this is concise, I'll stick with what we can do with standard Rust in this post.</p>
+<p>Next we need a function that returns the list of all permutations of all subsequences of a list.
+In the paper it is called <code>subbags</code> and uses predefined functions that returns permutations etc.
+We use the <code>permutations</code> function in the <a href="https://crates.io/crates/itertools">itertools</a> crate in Rust for simplicity:</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">subbags</span> <span class="ow">::</span> <span class="p">[</span><span class="n">a</span><span class="p">]</span> <span class="ow">-&gt;</span>  <span class="p">[</span><span class="p">[</span><span class="n">a</span> <span class="p">]</span><span class="p">]</span>
+<span class="nf">subbags</span> <span class="n">xs</span> <span class="ow">=</span> <span class="p">[</span><span class="n">zs</span> <span class="o">|</span> <span class="n">ys</span> <span class="ow">&lt;-</span> <span class="n">subs</span> <span class="n">xs</span><span class="p">,</span>
+                   <span class="n">zs</span> <span class="ow">&lt;-</span> <span class="n">perms</span> <span class="n">ys</span><span class="p">]</span>
+
+<span class="c1">-- subs and perms defined elsewhere</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span><span class="lnt">6
+</span><span class="lnt">7
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">sub_bags</span><span class="o">&lt;</span><span class="n">T</span>: <span class="nb">Clone</span><span class="o">&gt;</span><span class="p">(</span><span class="n">xs</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">  </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">T</span><span class="o">&gt;</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">(</span><span class="mi">0</span><span class="p">.</span><span class="p">.</span><span class="n">xs</span><span class="p">.</span><span class="n">len</span><span class="p">(</span><span class="p">)</span><span class="w"> </span><span class="o">+</span><span class="w"> </span><span class="mi">1</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">flat_map</span><span class="p">(</span><span class="o">|</span><span class="n">i</span><span class="o">|</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="n">xs</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="n">cloned</span><span class="p">(</span><span class="p">)</span><span class="p">.</span><span class="n">permutations</span><span class="p">(</span><span class="n">i</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">collect</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>With all the utility functions in place, we are ready to implement the logic for the countdown problem.
+The idea is to consider all valid expressions and sub results and combine them to see if we can get the
+intended result.</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt">1
+</span><span class="lnt">2
+</span><span class="lnt">3
+</span><span class="lnt">4
+</span><span class="lnt">5
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">combine</span> <span class="ow">::</span> <span class="kt">Result</span> <span class="ow">-&gt;</span> <span class="kt">Result</span> 
+           <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Result</span><span class="p">]</span>
+<span class="nf">combine</span> <span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="n">x</span><span class="p">)</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+  <span class="ow">=</span> <span class="p">[</span><span class="p">(</span><span class="kt">App</span> <span class="n">o</span> <span class="n">l</span> <span class="n">r</span><span class="p">,</span> <span class="n">apply</span> <span class="n">o</span> <span class="n">x</span> <span class="n">y</span><span class="p">)</span>
+      <span class="o">|</span> <span class="n">o</span> <span class="ow">&lt;-</span> <span class="n">ops</span><span class="p">,</span> <span class="n">valid</span> <span class="n">o</span> <span class="n">x</span> <span class="n">y</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">combine</span><span class="p">(</span><span class="p">(</span><span class="n">l</span><span class="p">,</span><span class="w"> </span><span class="n">x</span><span class="p">)</span>: <span class="kp">&amp;</span><span class="nb">Result</span><span class="p">,</span><span class="w"> </span><span class="p">(</span><span class="n">r</span><span class="p">,</span><span class="w"> </span><span class="n">y</span><span class="p">)</span>: <span class="kp">&amp;</span><span class="nb">Result</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">  </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Result</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">[</span><span class="n">Add</span><span class="p">,</span><span class="w"> </span><span class="n">Sub</span><span class="p">,</span><span class="w"> </span><span class="n">Mul</span><span class="p">,</span><span class="w"> </span><span class="n">Div</span><span class="p">]</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">filter</span><span class="p">(</span><span class="o">|</span><span class="n">op</span><span class="o">|</span><span class="w"> </span><span class="n">valid</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="n">op</span><span class="o">|</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="p">(</span><span class="n">App</span><span class="p">(</span><span class="o">*</span><span class="n">op</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">           </span><span class="n">Rc</span>::<span class="n">new</span><span class="p">(</span><span class="n">l</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">           </span><span class="n">Rc</span>::<span class="n">new</span><span class="p">(</span><span class="n">r</span><span class="p">.</span><span class="n">clone</span><span class="p">(</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="n">apply</span><span class="p">(</span><span class="n">op</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">y</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">collect</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>The main difference in Rust has to do with ownership again. To create an <code>App</code> we need
+to create a new <code>Rc</code> for the sub expressions (lines 7 and 8).</p>
+<p>Finally the function that ties everything together:</p>
+<table>
+<tr>
+<td> Haskell </td>
+<td> Rust </td>
+</tr>
+<tr>
+<td style="vertical-align:top">
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-haskell" data-lang="haskell"><span class="nf">results</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Result</span><span class="p">]</span>
+<span class="nf">results</span> <span class="kt">[]</span>  <span class="ow">=</span> <span class="kt">[]</span>
+<span class="nf">results</span> <span class="p">[</span><span class="n">n</span><span class="p">]</span> <span class="ow">=</span> <span class="p">[</span><span class="p">(</span><span class="kt">Val</span> <span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span> <span class="o">|</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">]</span>
+<span class="nf">results</span> <span class="n">ns</span>
+  <span class="ow">=</span> <span class="p">[</span><span class="n">res</span> <span class="o">|</span> <span class="p">(</span><span class="n">ls</span><span class="p">,</span><span class="n">rs</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">nesplit</span> <span class="n">ns</span>
+         <span class="p">,</span> <span class="n">lx</span>  <span class="ow">&lt;-</span> <span class="n">results</span> <span class="n">ls</span>
+         <span class="p">,</span> <span class="n">ry</span>  <span class="ow">&lt;-</span> <span class="n">results</span> <span class="n">rs</span>
+         <span class="p">,</span> <span class="n">res</span> <span class="ow">&lt;-</span> <span class="n">combine</span> <span class="n">lx</span> <span class="n">ry</span><span class="p">]</span>
+
+<span class="nf">solutions</span> <span class="ow">::</span> <span class="p">[</span><span class="kt">Int</span><span class="p">]</span> <span class="ow">-&gt;</span> <span class="kt">Int</span> <span class="ow">-&gt;</span> <span class="p">[</span><span class="kt">Expr</span><span class="p">]</span>
+<span class="nf">solutions</span> <span class="n">ns</span> <span class="n">n</span>
+  <span class="ow">=</span> <span class="p">[</span><span class="n">e</span> <span class="o">|</span> <span class="n">ns&#39;</span> <span class="ow">&lt;-</span> <span class="n">subbags</span> <span class="n">ns</span>
+       <span class="p">,</span> <span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="n">m</span><span class="p">)</span> <span class="ow">&lt;-</span> <span class="n">results</span> <span class="n">ns&#39;</span>
+       <span class="p">,</span> <span class="n">m</span> <span class="o">==</span> <span class="n">n</span><span class="p">]</span>
+</code></pre></td></tr></table>
+</div>
+</div></td>
+<td>
+<div class="highlight"><div class="chroma">
+<table class="lntable"><tr><td class="lntd">
+<pre class="chroma"><code><span class="lnt"> 1
+</span><span class="lnt"> 2
+</span><span class="lnt"> 3
+</span><span class="lnt"> 4
+</span><span class="lnt"> 5
+</span><span class="lnt"> 6
+</span><span class="lnt"> 7
+</span><span class="lnt"> 8
+</span><span class="lnt"> 9
+</span><span class="lnt">10
+</span><span class="lnt">11
+</span><span class="lnt">12
+</span><span class="lnt">13
+</span><span class="lnt">14
+</span><span class="lnt">15
+</span><span class="lnt">16
+</span><span class="lnt">17
+</span><span class="lnt">18
+</span><span class="lnt">19
+</span><span class="lnt">20
+</span><span class="lnt">21
+</span><span class="lnt">22
+</span><span class="lnt">23
+</span><span class="lnt">24
+</span><span class="lnt">25
+</span><span class="lnt">26
+</span><span class="lnt">27
+</span></code></pre></td>
+<td class="lntd">
+<pre class="chroma"><code class="language-rust" data-lang="rust"><span class="k">fn</span> <span class="nf">results</span><span class="p">(</span><span class="n">ns</span>: <span class="kp">&amp;</span><span class="p">[</span><span class="n">Int</span><span class="p">]</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Result</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="k">match</span><span class="w"> </span><span class="n">ns</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">[</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vec</span><span class="o">!</span><span class="p">(</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">[</span><span class="n">n</span><span class="p">]</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">vec</span><span class="o">!</span><span class="p">(</span><span class="p">(</span><span class="n">Val</span><span class="p">(</span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="p">,</span><span class="w"> </span><span class="o">*</span><span class="n">n</span><span class="p">)</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="n">_</span><span class="w"> </span><span class="o">=</span><span class="o">&gt;</span><span class="w"> </span><span class="n">_results</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="p">,</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">fn</span> <span class="nf">_results</span><span class="p">(</span><span class="n">ns</span>: <span class="kp">&amp;</span><span class="p">[</span><span class="n">Int</span><span class="p">]</span><span class="p">)</span><span class="w"> </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="nb">Result</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">split</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">flat_map</span><span class="p">(</span><span class="o">|</span><span class="p">(</span><span class="n">ls</span><span class="p">,</span><span class="w"> </span><span class="n">rs</span><span class="p">)</span><span class="o">|</span><span class="w"> </span><span class="n">results</span><span class="p">(</span><span class="n">ls</span><span class="p">)</span><span class="p">.</span><span class="n">into_iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">      </span><span class="p">.</span><span class="n">flat_map</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">|</span><span class="n">lx</span><span class="o">|</span><span class="w"> </span><span class="n">results</span><span class="p">(</span><span class="n">rs</span><span class="p">)</span><span class="p">.</span><span class="n">into_iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="p">.</span><span class="n">flat_map</span><span class="p">(</span><span class="k">move</span><span class="w"> </span><span class="o">|</span><span class="n">ry</span><span class="o">|</span><span class="w"> </span><span class="n">combine</span><span class="p">(</span><span class="o">&amp;</span><span class="n">lx</span><span class="p">,</span><span class="w"> </span><span class="o">&amp;</span><span class="n">ry</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">collect</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span><span class="w"></span><span class="w">
+</span><span class="w"></span><span class="k">pub</span><span class="w"> </span><span class="k">fn</span> <span class="nf">solutions</span><span class="p">(</span><span class="n">ns</span>: <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Int</span><span class="o">&gt;</span><span class="p">,</span><span class="w"> </span><span class="n">n</span>: <span class="nc">Int</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">  </span>-&gt; <span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">  </span><span class="n">sub_bags</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="p">.</span><span class="n">iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">flat_map</span><span class="p">(</span><span class="o">|</span><span class="n">b</span><span class="o">|</span><span class="w"> </span><span class="p">{</span><span class="w">
+</span><span class="w"></span><span class="w">        </span><span class="n">results</span><span class="p">(</span><span class="o">&amp;</span><span class="n">b</span><span class="p">)</span><span class="p">.</span><span class="n">into_iter</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">          </span><span class="p">.</span><span class="n">filter</span><span class="p">(</span><span class="o">|</span><span class="p">(</span><span class="n">_</span><span class="p">,</span><span class="w"> </span><span class="n">m</span><span class="p">)</span><span class="o">|</span><span class="w"> </span><span class="o">*</span><span class="n">m</span><span class="w"> </span><span class="o">=</span><span class="o">=</span><span class="w"> </span><span class="n">n</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">          </span><span class="p">.</span><span class="n">map</span><span class="p">(</span><span class="o">|</span><span class="p">(</span><span class="n">e</span><span class="p">,</span><span class="w"> </span><span class="n">_</span><span class="p">)</span><span class="o">|</span><span class="w"> </span><span class="n">e</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">          </span><span class="p">.</span><span class="n">collect</span>::<span class="o">&lt;</span><span class="nb">Vec</span><span class="o">&lt;</span><span class="n">Expr</span><span class="o">&gt;</span><span class="o">&gt;</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">}</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="w">    </span><span class="p">.</span><span class="n">collect</span><span class="p">(</span><span class="p">)</span><span class="w">
+</span><span class="w"></span><span class="p">}</span><span class="w">
+</span></code></pre></td></tr></table>
+</div>
+</div></td>
+</tr>
+</table
+<p>That's it. This is  the complete implementation. You can checkout the complete runnable code
+<a href="https://github.com/amitdev/count_down">here</a>.</p>
+<h3 id="sidenote---adding-parallelism"><a href="#sidenote---adding-parallelism" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Sidenote - adding parallelism</h3>
+<p>Since our code is written in a functional way it is trivial to make parts of it parallel.
+By using the <a href="https://crates.io/crates/rayon">rayon</a> crate and just making two <a href="https://github.com/amitdev/count_down/commit/1516ce5ea24bf7c6e01d0afa1807b6d1b74ee57b">minor</a> changes:</p>
+<ul>
+<li><code>sub_bags(ns).iter()</code> &ndash;&gt; <code>sub_bags(ns).par_iter()</code></li>
+<li><code>Rc</code> &ndash;&gt; <code>Arc</code></li>
+</ul>
+<p>this reduces the execution time from <em>~370ms</em> to <em>~70ms</em> for the above example.</p>
+<h2 id="summary"><a href="#summary" class="anchor-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon anchor-icon"><path d="M326.612 185.391c59.747 59.809 58.927 155.698.36 214.59-.11.12-.24.25-.36.37l-67.2 67.2c-59.27 59.27-155.699 59.262-214.96 0-59.27-59.26-59.27-155.7 0-214.96l37.106-37.106c9.84-9.84 26.786-3.3 27.294 10.606.648 17.722 3.826 35.527 9.69 52.721 1.986 5.822.567 12.262-3.783 16.612l-13.087 13.087c-28.026 28.026-28.905 73.66-1.155 101.96 28.024 28.579 74.086 28.749 102.325.51l67.2-67.19c28.191-28.191 28.073-73.757 0-101.83-3.701-3.694-7.429-6.564-10.341-8.569a16.037 16.037 0 0 1-6.947-12.606c-.396-10.567 3.348-21.456 11.698-29.806l21.054-21.055c5.521-5.521 14.182-6.199 20.584-1.731a152.482 152.482 0 0 1 20.522 17.197zM467.547 44.449c-59.261-59.262-155.69-59.27-214.96 0l-67.2 67.2c-.12.12-.25.25-.36.37-58.566 58.892-59.387 154.781.36 214.59a152.454 152.454 0 0 0 20.521 17.196c6.402 4.468 15.064 3.789 20.584-1.731l21.054-21.055c8.35-8.35 12.094-19.239 11.698-29.806a16.037 16.037 0 0 0-6.947-12.606c-2.912-2.005-6.64-4.875-10.341-8.569-28.073-28.073-28.191-73.639 0-101.83l67.2-67.19c28.239-28.239 74.3-28.069 102.325.51 27.75 28.3 26.872 73.934-1.155 101.96l-13.087 13.087c-4.35 4.35-5.769 10.79-3.783 16.612 5.864 17.194 9.042 34.999 9.69 52.721.509 13.906 17.454 20.446 27.294 10.606l37.106-37.106c59.271-59.259 59.271-155.699.001-214.959z"/></svg></a>Summary</h2>
+<p>Rust is a fairly expressive language and using the functional style is
+quite natural. Ownership and lifetimes do get in the way sometimes,
+but it is a price worth paying considering the runtime benefits.
+Also the compiler error messages are really helpful and guides you to
+the right solution.</p>
+</div>
+
+        </article>
+
+        
+
+        
+
+        
+
+        
+
+        
+    
+    
+        <div class="related-posts">
+            <h2 class="related-title">See Also:<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon related-icon"><path d="M256 8C119 8 8 119 8 256s111 248 248 248 248-111 248-248S393 8 256 8zm144 276c0 6.6-5.4 12-12 12h-92v92c0 6.6-5.4 12-12 12h-56c-6.6 0-12-5.4-12-12v-92h-92c-6.6 0-12-5.4-12-12v-56c0-6.6 5.4-12 12-12h92v-92c0-6.6 5.4-12 12-12h56c6.6 0 12 5.4 12 12v92h92c6.6 0 12 5.4 12 12v56z"/></svg></h2>
+            <ul class="related-list">
+                
+                    <li class="related-item">
+                        <a href="/posts/2019-03-26-functional-rust/" class="related-link">Functional programming in Rust</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-07-28-a-functional-design-pattern/" class="related-link">A functional design pattern</a>
+                    </li>
+                
+                    <li class="related-item">
+                        <a href="/posts/2014-03-06-priority-queue/" class="related-link">Purely functional Priority Queue</a>
+                    </li>
+                
+            </ul>
+        </div>
+    
+
+
+        
+    
+        <div class="post-tags">
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/functional-programming/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>functional programming</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/rust/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>rust</a>
+                
+            
+                
+                
+                
+                
+                    
+                    <a href="/tags/haskell/" rel="tag" class="post-tags-link"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" class="icon tag-icon"><path d="M0 252.118V48C0 21.49 21.49 0 48 0h204.118a48 48 0 0 1 33.941 14.059l211.882 211.882c18.745 18.745 18.745 49.137 0 67.882L293.823 497.941c-18.745 18.745-49.137 18.745-67.882 0L14.059 286.059A48 48 0 0 1 0 252.118zM112 64c-26.51 0-48 21.49-48 48s21.49 48 48 48 48-21.49 48-48-21.49-48-48-48z"/></svg>haskell</a>
+                
+            
+        </div>
+    
+
+
+        
+
+        
+
+        
+    
+        
+        
+    
+    
+    
+    
+        <ul class="post-nav">
+            
+            
+                <li class="post-nav-next">
+                    <a href="/posts/2019-03-26-functional-rust/" rel="next">Functional programming in Rust ></a>
+                </li>
+            
+        </ul>
+    
+
+
+        
+
+    </div>
+</main>
+
+            
+    <div id="back-to-top" class="back-to-top">
+        <a href="#"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" class="icon"><path d="M34.9 289.5l-22.2-22.2c-9.4-9.4-9.4-24.6 0-33.9L207 39c9.4-9.4 24.6-9.4 33.9 0l194.3 194.3c9.4 9.4 9.4 24.6 0 33.9L413 289.4c-9.5 9.5-25 9.3-34.3-.4L264 168.6V456c0 13.3-10.7 24-24 24h-32c-13.3 0-24-10.7-24-24V168.6L69.2 289.1c-9.3 9.8-24.8 10-34.3.4z"/></svg></a>
+    </div>
+
+            
+    <footer id="footer" class="footer">
+        <div class="footer-inner"><div class="site-info">©&nbsp;2014–2020&nbsp;Amit Dev</div>
+                <div class="site-copyright"><a href="https://creativecommons.org/licenses/by-nc-sa/4.0/deed.en">CC BY-NC-SA 4.0</a></div>
+
+            
+        </div>
+    </footer>
+
+        </div>
+        <script src="/js/meme.min.28a5d4816af314c49aa3cbde0f1fcf915fde38249ea2822037483dabeba1c680.js" integrity="sha256-KKXUgWrzFMSao8veDx/PkV/eOCSeooIgN0g9q+uhxoA=" data-no-instant></script>
+
+
+    <script data-no-instant>InstantClick.init();</script>
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            backToTop();
+        });
+    </script>
+
+
+
+    <script data-no-instant>
+        InstantClick.on('change', function () {
+            const userPrefers = localStorage.getItem('theme');
+            const darkModeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
+            const lightModeMediaQuery = window.matchMedia('(prefers-color-scheme: light)');
+            if (userPrefers === "dark") {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (userPrefers === "light") {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            } else if (darkModeMediaQuery.matches) {
+                changeModeMeta("dark");
+                changeMode("🌙", "chroma", "chroma-dark");
+            } else if (lightModeMediaQuery.matches) {
+                changeModeMeta("light");
+                changeMode("🌞", "chroma-dark", "chroma");
+            }
+        });
+    </script>
+<script data-no-instant>
+            InstantClick.on('change', function () {
+                ga('send', 'pageview', location.pathname + location.search);
+            });
+        </script>
+    
+    
+    <script src="https://cdn.jsdelivr.net/gh/cferdinandi/smooth-scroll/dist/smooth-scroll.polyfills.min.js"></script>
+
+<script>
+    var scroll = new SmoothScroll('a[href*="#"]', {
+        speedAsDuration: true
+    });
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    </body>
+</html>
